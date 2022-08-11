@@ -12,8 +12,8 @@ public class VRGrab : MonoBehaviour
 
     private bool grabbing;
 
-    private VrGrabable holdingObj;
-    private readonly List<GameObject> grabableObjects = new List<GameObject>();
+    private VrGrabObject holdingObj;
+    private readonly List<GameObject> objectsInRange = new List<GameObject>();
 
     #endregion
 
@@ -46,27 +46,27 @@ public class VRGrab : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<VrGrabable>() != null && !this.grabableObjects.Contains(other.gameObject))
-            this.grabableObjects.Add(other.gameObject);
+        if (other.gameObject.GetComponent<VrGrabObject>() != null && !this.objectsInRange.Contains(other.gameObject))
+            this.objectsInRange.Add(other.gameObject);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (this.grabableObjects.Contains(other.gameObject))
-            this.grabableObjects.Remove(other.gameObject);
+        if (this.objectsInRange.Contains(other.gameObject))
+            this.objectsInRange.Remove(other.gameObject);
     }
 
     #endregion
 
     private void Grab()
     {
-        if (this.grabableObjects.Count == 0)
+        if (this.objectsInRange.Count == 0)
             return;
 
         Vector3 pos = transform.position;
 
-        this.holdingObj = this.grabableObjects.OrderBy(o => Vector3.Distance(o.transform.position, pos)).First()
-            .GetComponent<VrGrabable>();
+        this.holdingObj = this.objectsInRange.OrderBy(o => Vector3.Distance(o.transform.position, pos)).First()
+            .GetComponent<VrGrabObject>();
 
         if (this.holdingObj != null)
             this.holdingObj.Grab(transform);

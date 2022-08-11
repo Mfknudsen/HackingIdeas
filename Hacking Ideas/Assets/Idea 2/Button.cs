@@ -1,6 +1,6 @@
 namespace Idea_2
 {
-    public class Button : VrGrabable
+    public class Button : VrGrabObject
     {
         public GridKey key;
 

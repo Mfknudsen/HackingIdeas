@@ -11,7 +11,7 @@ namespace Idea_2
         MinusY
     }
 
-    public abstract class InputBlock : VrGrabable
+    public abstract class InputBlock : VrGrabObject
     {
         public PlaceDirection placeDirection;
         public InputBoard inputBoard;

@@ -13,10 +13,7 @@ namespace Idea_2
 
         private Vector2Int originID;
 
-        public void Move(Vector2Int newID)
-        {
-            inputBoard.Trigger(this, newID);
-        }
+        private void Move(Vector2Int newID) => inputBoard.Trigger(this, newID);
 
         public void TriggerFirst()
         {
@@ -25,6 +22,7 @@ namespace Idea_2
 
             originID = id;
             ready = false;
+
             StartCoroutine(MoveToFirst());
         }
 
@@ -39,6 +37,7 @@ namespace Idea_2
                 Mathf.Clamp(id.y, 0, this.visualGrid.gridTransforms.GetLength(1) - 1));
 
             Vector3 pos = this.visualGrid.gridTransforms[checkFrom.x, checkFrom.y].position;
+
             Vector3 upDir = this.visualGrid.gridTransforms[0, 1].position -
                             this.visualGrid.gridTransforms[0, 0].position,
                 rightDir = this.visualGrid.gridTransforms[1, 0].position -
@@ -96,20 +95,18 @@ namespace Idea_2
                 0
             );
 
-
             this.id = keyStartID;
 
             Vector2Int checkFrom = new Vector2Int(
                 Mathf.Clamp(keyStartID.x, 0, xSize - 1),
                 Mathf.Clamp(keyStartID.y, 0, ySize - 1));
 
-            Vector3 pos = this.visualGrid.gridTransforms[checkFrom.x, checkFrom.y].position;
-            Vector3 upDir = this.visualGrid.gridTransforms[0, 1].position -
-                            this.visualGrid.gridTransforms[0, 0].position,
-                rightDir = this.visualGrid.gridTransforms[1, 0].position -
-                           this.visualGrid.gridTransforms[0, 0].position;
+            Vector3 pos = this.visualGrid.gridTransforms[0, 0].position;
+            Vector3 upDir = this.visualGrid.gridTransforms[0, 1].position - pos,
+                rightDir = this.visualGrid.gridTransforms[1, 0].position - pos;
 
-            transform.position = pos + upDir * extraDir.y + rightDir * extraDir.x;
+            transform.position = this.visualGrid.gridTransforms[checkFrom.x, checkFrom.y].position +
+                                 upDir * extraDir.y + rightDir * extraDir.x;
         }
     }
 }

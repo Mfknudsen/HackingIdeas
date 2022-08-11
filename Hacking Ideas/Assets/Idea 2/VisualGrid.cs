@@ -31,20 +31,25 @@ namespace Idea_2
             this.gridTransforms = new Transform[size.x, size.y];
             this.blocks.Clear();
 
+            Transform temp = transform;
+            
             for (int x = 0; x < size.x; x++)
             {
                 for (int y = 0; y < size.y; y++)
                 {
-                    GameObject obj = Instantiate(tilePrefab, transform);
+                    GameObject obj = Instantiate(tilePrefab, temp);
                     obj.name = "Square + " + x + "-" + y;
-                    obj.transform.localScale *= sizeScale;
-                    float localSize = obj.transform.localScale.x * 10;
+                    Vector3 tempScale = obj.transform.localScale * sizeScale;
+                    float localSize = tempScale.x * 10;
+                    obj.transform.localScale = tempScale;
                     this.gridTransforms[x, y] = obj.transform;
-                    obj.transform.position = transform.position;
-                    obj.transform.position -= transform.right * x * localSize - transform.up * y * localSize;
-                    obj.transform.position += transform.right * (size.x / 2) * localSize -
-                                              transform.up * (size.y / 2) * localSize;
-                    obj.transform.LookAt(obj.transform.position - transform.up);
+                    Vector3 tempPosition = temp.position,
+                        up = temp.up,
+                        right = temp.right;
+                    tempPosition -= right * x * localSize - up * y * localSize;
+                    tempPosition += right * (size.x / 2f) * localSize - up * (size.y / 2f) * localSize;
+                    obj.transform.position = tempPosition;
+                    obj.transform.LookAt(tempPosition - up);
 
                     GridSquare square = obj.GetComponent<GridSquare>();
                     square.id = new Vector2Int(x, y);

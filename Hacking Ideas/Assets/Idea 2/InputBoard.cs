@@ -6,13 +6,14 @@ namespace Idea_2
 {
     public class InputBoard : MonoBehaviour
     {
-        public InputBlock[,] gridBlocks;
-        private Transform[,] gridTransforms;
-        [SerializeField] private float placeDist, sizeScale = 1;
         public GridHackSetup setup;
+        [SerializeField] private float placeDist, sizeScale = 1;
         [SerializeField] private List<GridSquare> blocks = new List<GridSquare>();
         [SerializeField] private Vector2Int gridSize;
         [SerializeField] private GridKey endPoint;
+
+        private InputBlock[,] gridBlocks;
+        private Transform[,] gridTransforms;
 
         private void Start()
         {
@@ -45,9 +46,9 @@ namespace Idea_2
                     obj.name = "Square + " + x + "-" + y;
 
                     Transform oTransform = obj.transform;
-                    oTransform.localScale *= sizeScale;
-
-                    float localSize = oTransform.localScale.x * 10;
+                    Vector3 tempScale = oTransform.localScale * sizeScale;
+                    float localSize = tempScale.x * 10;
+                    oTransform.localScale = tempScale;
 
                     gridTransforms[x, y] = oTransform;
 
@@ -56,8 +57,8 @@ namespace Idea_2
 
                     objPosition -=
                         right * x * localSize + forward * y * localSize;
-                    objPosition += right * (size.x / 2) * localSize +
-                                   forward * (size.y / 2) * localSize;
+                    objPosition += right * (size.x / 2f) * localSize +
+                                   forward * (size.y / 2f) * localSize;
                     oTransform.position = objPosition;
                     oTransform.LookAt(objPosition + forward);
 
@@ -150,12 +151,15 @@ namespace Idea_2
             }
 
             block.id = closestID;
-            Transform tile = this.gridTransforms[closestID.x, closestID.y];
-            Vector3 blockForward = block.transform.forward;
-            float aForward = Vector3.Angle(blockForward, tile.forward),
-                aRight = Vector3.Angle(blockForward, tile.right),
-                aBackwards = Vector3.Angle(blockForward, -tile.forward),
-                aLeft = Vector3.Angle(blockForward, -tile.right);
+            Transform tile = this.gridTransforms[closestID.x, closestID.y],
+                blockTransform = block.transform;
+            Vector3 blockForward = blockTransform.forward,
+                f = tile.forward,
+                r = tile.right;
+            float aForward = Vector3.Angle(blockForward, f),
+                aRight = Vector3.Angle(blockForward, r),
+                aBackwards = Vector3.Angle(blockForward, -f),
+                aLeft = Vector3.Angle(blockForward, -r);
 
             if (aForward < aRight && aForward < aBackwards && aForward < aLeft)
                 block.placeDirection = PlaceDirection.MinusY;
@@ -166,14 +170,14 @@ namespace Idea_2
             else
                 block.placeDirection = PlaceDirection.PlusX;
 
-            block.transform.position = this.gridTransforms[closestID.x, closestID.y].position;
+            blockTransform.position = this.gridTransforms[closestID.x, closestID.y].position;
 
             Vector3 pos = this.gridTransforms[0, 0].position;
             Vector3 forward = this.gridTransforms[0, 1].position - pos,
                 right = this.gridTransforms[1, 0].position - pos;
 
-            block.transform.LookAt(
-                block.transform.position
+            blockTransform.LookAt(
+                blockTransform.position
                 + forward * block.idDir.y
                 + right * block.idDir.x,
                 this.gridTransforms[0, 0].up);

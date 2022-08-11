@@ -13,6 +13,7 @@ namespace Idea_2.InputBlocks
             Vector3 up = visualGrid.gridTransforms[0, 1].position - visualGrid.gridTransforms[0, 0].position,
                 right = visualGrid.gridTransforms[1, 0].position - visualGrid.gridTransforms[0, 0].position;
             Vector3 dir = up * this.idDir.y + right * this.idDir.x;
+            
             while (this.t < timePerBlock)
             {
                 this.t += Time.deltaTime;

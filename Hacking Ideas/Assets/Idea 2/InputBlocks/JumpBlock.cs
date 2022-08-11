@@ -36,7 +36,7 @@ namespace Idea_2.InputBlocks
 
             keyTransform.localScale = keySize;
 
-            this.    inputBoard.Trigger(key, idToMoveTo);
+            this.inputBoard.Trigger(key, idToMoveTo);
         }
     }
 }

@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class VrGrabable : MonoBehaviour
+public abstract class VrGrabObject : MonoBehaviour
 {
     protected Transform originParent;
 
