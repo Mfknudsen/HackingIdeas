@@ -18,21 +18,30 @@ namespace Idea_2
         public Table table;
         private bool inserted;
         public Vector2Int id;
+        private float speed;
 
         protected float t = 0;
 
         public abstract IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid);
 
+        private void Start()
+        {
+            speed = Random.Range(5, 10);
+            speed *= Random.Range(0f, 1f) < .5f ? -1 : 1;
+        }
+
         private void Update()
         {
             if (!this.inserted)
-                transform.Rotate(transform.up, 5 * Time.deltaTime);
+                transform.Rotate(transform.up, speed * Time.deltaTime);
         }
 
         protected override void OnGrab()
         {
             if (this.inserted)
                 this.inputBoard.RemoveFromBoard(this);
+            else
+                this.table.spawning = true;
         }
 
         protected override void OnRelease()
@@ -40,7 +49,7 @@ namespace Idea_2
             this.inserted = this.inputBoard.TryPlaceBlock(this);
 
             if (!this.inserted)
-                this.table.Return(transform);
+                Destroy(gameObject);
         }
 
         public Vector2Int idDir => this.placeDirection switch

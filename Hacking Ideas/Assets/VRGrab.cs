@@ -27,6 +27,12 @@ public class VRGrab : MonoBehaviour
 
     private void Update()
     {
+        for (int i = objectsInRange.Count - 1; i >= 0; i--)
+        {
+            if (objectsInRange[i] == null)
+                objectsInRange.RemoveAt(i);
+        }
+
         float grib = (this.rightHand
                 ? this.playerInput.Player.GrabRight
                 : this.playerInput.Player.GrabLeft)
@@ -65,11 +71,19 @@ public class VRGrab : MonoBehaviour
 
         Vector3 pos = transform.position;
 
-        this.holdingObj = this.objectsInRange.OrderBy(o => Vector3.Distance(o.transform.position, pos)).First()
-            .GetComponent<VrGrabObject>();
+        this.holdingObj = this.objectsInRange
+            .Where(o => o != null)
+            .OrderBy(o => Vector3.Distance(o.transform.position, pos))
+            .FirstOrDefault()
+            ?.GetComponent<VrGrabObject>();
 
-        if (this.holdingObj != null)
-            this.holdingObj.Grab(transform);
+
+        if (this.holdingObj == null) return;
+
+        if (this.holdingObj.GetComponentInParent<VRGrab>() is { } g)
+            g.holdingObj = null;
+
+        this.holdingObj.Grab(transform);
     }
 
     private void Release()

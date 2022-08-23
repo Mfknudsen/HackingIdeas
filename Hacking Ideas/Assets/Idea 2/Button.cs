@@ -2,13 +2,12 @@ namespace Idea_2
 {
     public class Button : VrGrabObject
     {
-        public GridKey key;
-
         protected override void OnGrab()
         {
-            this.key.TriggerFirst();
-
             transform.parent = this.originParent;
+
+            foreach (GridKey key in this.originParent.GetComponentsInChildren<GridKey>())
+                key.TriggerFirst();
         }
 
         protected override void OnRelease()

@@ -1,42 +1,61 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Idea_2.Blockers;
 using UnityEngine;
 
 namespace Idea_2
 {
+    public enum BlockerType
+    {
+        None,
+        Total,
+        Up,
+        Down,
+        Right,
+        Left,
+        DeniedUp,
+        DeniedDown,
+        DeniedLeft,
+        DeniedRight,
+        SwitchUp,
+        SwitchDown,
+        SwitchLeft,
+        SwitchRight
+    }
+
     public class InputBoard : MonoBehaviour
     {
         public GridHackSetup setup;
         [SerializeField] private float placeDist, sizeScale = 1;
-        [SerializeField] private List<GridSquare> blocks = new List<GridSquare>();
-        [SerializeField] private Vector2Int gridSize;
+        private Vector2Int gridSize;
         [SerializeField] private GridKey endPoint;
 
-        private InputBlock[,] gridBlocks;
-        private Transform[,] gridTransforms;
-
-        private void Start()
-        {
-            this.gridTransforms = new Transform[gridSize.x, gridSize.y];
-            this.gridBlocks = new InputBlock[gridSize.x, gridSize.y];
-
-            foreach (GridSquare block in blocks)
-                this.gridTransforms[block.id.x, block.id.y] = block.transform;
-        }
+        [SerializeField, HideInInspector] private List<Storage<InputBlock>> gridBlocks;
+        [SerializeField, HideInInspector] public List<Storage<Transform>> gridTransforms;
+        [SerializeField, HideInInspector] public List<Storage<BlockerType>> blockerTypes;
 
         public void Setup(Vector2Int size, GameObject tilePrefab)
         {
             this.gridSize = size;
-            List<GameObject> toDelete = (from Transform d in transform select d.gameObject).ToList();
+            List<GameObject> toDelete =
+                (from Transform d in transform select d.gameObject)
+                .ToList();
             foreach (GameObject o in toDelete)
                 DestroyImmediate(o);
 
-            this.gridBlocks = new InputBlock[size.x, size.y];
-            this.gridTransforms = new Transform[size.x, size.y];
+            this.blockerTypes = new List<Storage<BlockerType>>();
+            this.gridBlocks = new List<Storage<InputBlock>>();
+            this.gridTransforms = new List<Storage<Transform>>();
+            for (int x = 0; x < size.x; x++)
+            {
+                this.blockerTypes.Add(new Storage<BlockerType>(size.y));
+                this.gridBlocks.Add(new Storage<InputBlock>(size.y));
+                this.gridTransforms.Add(new Storage<Transform>(size.y));
+            }
 
             Transform t = transform;
             Vector3 startPos = t.position + t.up * .55f;
-            blocks.Clear();
 
             for (int x = 0; x < size.x; x++)
             {
@@ -50,35 +69,30 @@ namespace Idea_2
                     float localSize = tempScale.x * 10;
                     oTransform.localScale = tempScale;
 
-                    gridTransforms[x, y] = oTransform;
+                    gridTransforms[x].Set(y, oTransform);
 
                     Vector3 objPosition = startPos;
                     Vector3 forward = t.forward, right = t.right;
 
                     objPosition -=
-                        right * x * localSize + forward * y * localSize;
-                    objPosition += right * (size.x / 2f) * localSize +
-                                   forward * (size.y / 2f) * localSize;
+                        right * (x * localSize) + forward * (y * localSize);
+                    objPosition += right * (size.x / 2f * localSize) +
+                                   forward * (size.y / 2f * localSize);
                     oTransform.position = objPosition;
                     oTransform.LookAt(objPosition + forward);
-
-                    GridSquare square = obj.GetComponent<GridSquare>();
-                    square.id = new Vector2Int(x, y);
-
-                    blocks.Add(square);
                 }
             }
         }
 
         public void RemoveFromBoard(InputBlock block)
         {
-            for (int x = 0; x < gridBlocks.GetLength(0); x++)
+            foreach (Storage<InputBlock> t in this.gridBlocks)
             {
-                for (int y = 0; y < gridBlocks.GetLength(1); y++)
+                for (int y = 0; y < this.gridBlocks[0].Count(); y++)
                 {
-                    if (gridBlocks[x, y] != block) continue;
+                    if (t[y] != block) continue;
 
-                    gridBlocks[x, y] = null;
+                    t.Set(y, null);
                     break;
                 }
             }
@@ -94,14 +108,30 @@ namespace Idea_2
 
             if (id.x < 0 || id.y < 0 ||
                 id.x == this.gridSize.x || id.y == this.gridSize.y ||
-                this.gridBlocks[id.x, id.y] == null)
+                (this.gridBlocks[id.x][id.y] == null && this.blockerTypes[id.x][id.y] == BlockerType.None))
             {
                 key.Reset();
                 return;
             }
 
+            if (blockerTypes[id.x][id.y] == BlockerType.Total)
+            {
+                key.Reset();
+                return;
+            }
+
+            if (blockerTypes[id.x][id.y] != BlockerType.None)
+            {
+                StartCoroutine(gridTransforms[id.x][id.y].GetComponentInChildren<Blocker>().Trigger(
+                    key,
+                    this.setup.timePerBlock,
+                    this.setup.visualGrid,
+                    this));
+                return;
+            }
+
             StartCoroutine(
-                this.gridBlocks[id.x, id.y].TriggerInput(
+                this.gridBlocks[id.x][id.y].TriggerInput(
                     key,
                     this.setup.timePerBlock,
                     this.setup.visualGrid));
@@ -112,12 +142,17 @@ namespace Idea_2
             Vector2Int closestID = -Vector2Int.one;
             float lowestDist = 0;
 
-            for (int x = 0; x < this.gridTransforms.GetLength(0); x++)
+            for (int x = 0; x < this.gridTransforms.Count; x++)
             {
-                for (int y = 0; y < this.gridTransforms.GetLength(1); y++)
+                for (int y = 0; y < this.gridTransforms[0].Count(); y++)
                 {
-                    Transform gridTransform = this.gridTransforms[x, y];
+                    if (this.blockerTypes[x][y] != BlockerType.None)
+                        continue;
+
+                    Transform gridTransform = this.gridTransforms[x][y];
+
                     float dist = Vector3.Distance(gridTransform.position, block.transform.position);
+
                     if (dist >= this.placeDist)
                         continue;
 
@@ -140,10 +175,10 @@ namespace Idea_2
 
             try
             {
-                if (this.gridBlocks[closestID.x, closestID.y] != null)
+                if (this.gridBlocks[closestID.x][closestID.y] != null)
                     return false;
 
-                this.gridBlocks[closestID.x, closestID.y] = block;
+                this.gridBlocks[closestID.x].Set(closestID.y, block);
             }
             catch
             {
@@ -151,7 +186,7 @@ namespace Idea_2
             }
 
             block.id = closestID;
-            Transform tile = this.gridTransforms[closestID.x, closestID.y],
+            Transform tile = this.gridTransforms[closestID.x][closestID.y],
                 blockTransform = block.transform;
             Vector3 blockForward = blockTransform.forward,
                 f = tile.forward,
@@ -170,21 +205,48 @@ namespace Idea_2
             else
                 block.placeDirection = PlaceDirection.PlusX;
 
-            blockTransform.position = this.gridTransforms[closestID.x, closestID.y].position;
+            blockTransform.position = this.gridTransforms[closestID.x][closestID.y].position;
 
-            Vector3 pos = this.gridTransforms[0, 0].position;
-            Vector3 forward = this.gridTransforms[0, 1].position - pos,
-                right = this.gridTransforms[1, 0].position - pos;
+            Vector3 pos = this.gridTransforms[0][0].position;
+            Vector3 forward = this.gridTransforms[0][1].position - pos,
+                right = this.gridTransforms[1][0].position - pos;
 
             blockTransform.LookAt(
                 blockTransform.position
                 + forward * block.idDir.y
                 + right * block.idDir.x,
-                this.gridTransforms[0, 0].up);
+                this.gridTransforms[0][0].up);
 
-            this.gridBlocks[block.id.x, block.id.y] = block;
+            this.gridBlocks[block.id.x].Set(block.id.y, block);
 
             return true;
+        }
+    }
+
+    [Serializable]
+    public struct Storage<T>
+    {
+        public List<T> list;
+
+        public Storage(int size)
+        {
+            list = new List<T>();
+            for (int i = 0; i < size; i++)
+            {
+                list.Add(default);
+            }
+        }
+
+        public T this[int index] => list[index];
+
+        public void Set(int index, T set)
+        {
+            list[index] = set;
+        }
+
+        public int Count()
+        {
+            return list.Count;
         }
     }
 }

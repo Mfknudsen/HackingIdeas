@@ -10,6 +10,7 @@ namespace Idea_2
         public float timePerBlock = 1;
         public bool ready = true;
         public VisualGrid visualGrid;
+        public PlaceDirection previousDirection;
 
         private Vector2Int originID;
 
@@ -33,15 +34,15 @@ namespace Idea_2
             this.ready = true;
 
             Vector2Int checkFrom = new Vector2Int(
-                Mathf.Clamp(id.x, 0, this.visualGrid.gridTransforms.GetLength(0) - 1),
-                Mathf.Clamp(id.y, 0, this.visualGrid.gridTransforms.GetLength(1) - 1));
+                Mathf.Clamp(id.x, 0, this.visualGrid.gridTransforms.Count - 1),
+                Mathf.Clamp(id.y, 0, this.visualGrid.gridTransforms[0].Count() - 1));
 
-            Vector3 pos = this.visualGrid.gridTransforms[checkFrom.x, checkFrom.y].position;
+            Vector3 pos = this.visualGrid.gridTransforms[checkFrom.x][checkFrom.y].position;
 
-            Vector3 upDir = this.visualGrid.gridTransforms[0, 1].position -
-                            this.visualGrid.gridTransforms[0, 0].position,
-                rightDir = this.visualGrid.gridTransforms[1, 0].position -
-                           this.visualGrid.gridTransforms[0, 0].position;
+            Vector3 upDir = this.visualGrid.gridTransforms[0][1].position -
+                            this.visualGrid.gridTransforms[0][0].position,
+                rightDir = this.visualGrid.gridTransforms[1][0].position -
+                           this.visualGrid.gridTransforms[0][0].position;
 
             Vector2Int extraDir = this.id - checkFrom;
             transform.position = pos + upDir * extraDir.y + rightDir * extraDir.x;
@@ -51,10 +52,10 @@ namespace Idea_2
         {
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(
-                Mathf.Clamp(this.id.x, 0, this.visualGrid.gridTransforms.GetLength(0) - 1),
-                Mathf.Clamp(this.id.y, 0, this.visualGrid.gridTransforms.GetLength(1) - 1));
-
-            Vector3 dir = this.visualGrid.gridTransforms[idToMoveTo.x, idToMoveTo.y].position - transform.position;
+                Mathf.Clamp(this.id.x, 0, this.visualGrid.gridTransforms.Count - 1),
+                Mathf.Clamp(this.id.y, 0, this.visualGrid.gridTransforms[0].Count() - 1));
+            
+            Vector3 dir = this.visualGrid.gridTransforms[idToMoveTo.x][idToMoveTo.y].position - transform.position;
 
             while (t < this.timePerBlock)
             {
@@ -72,8 +73,8 @@ namespace Idea_2
         {
             this.visualGrid = visual;
 
-            int xSize = this.visualGrid.gridTransforms.GetLength(0),
-                ySize = this.visualGrid.gridTransforms.GetLength(1);
+            int xSize = this.visualGrid.gridTransforms.Count,
+                ySize = this.visualGrid.gridTransforms[0].Count();
             Vector2Int keyStartID = new Vector2Int(
                 Random.Range(0, xSize),
                 Random.Range(0, ySize));
@@ -101,11 +102,11 @@ namespace Idea_2
                 Mathf.Clamp(keyStartID.x, 0, xSize - 1),
                 Mathf.Clamp(keyStartID.y, 0, ySize - 1));
 
-            Vector3 pos = this.visualGrid.gridTransforms[0, 0].position;
-            Vector3 upDir = this.visualGrid.gridTransforms[0, 1].position - pos,
-                rightDir = this.visualGrid.gridTransforms[1, 0].position - pos;
+            Vector3 pos = this.visualGrid.gridTransforms[0][0].position;
+            Vector3 upDir = this.visualGrid.gridTransforms[0][1].position - pos,
+                rightDir = this.visualGrid.gridTransforms[1][0].position - pos;
 
-            transform.position = this.visualGrid.gridTransforms[checkFrom.x, checkFrom.y].position +
+            transform.position = this.visualGrid.gridTransforms[checkFrom.x][checkFrom.y].position +
                                  upDir * extraDir.y + rightDir * extraDir.x;
         }
     }
