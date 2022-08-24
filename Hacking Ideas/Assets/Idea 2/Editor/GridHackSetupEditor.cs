@@ -58,7 +58,7 @@ namespace Idea_2.Editor
             Rect scale = GUILayoutUtility.GetLastRect();
             const float ySize = 20;
 
-            if (board.blockerTypes.Count == 0 || board.blockerTypes[0].Count() == 0)
+            if (board.blockerTypes.Count == 0 || board.blockerTypes[0].Count == 0)
             {
                 base.OnInspectorGUI();
                 return;
@@ -207,7 +207,7 @@ namespace Idea_2.Editor
                     }
                 }
                 else
-                    this.setup.keyStartPositions.Add(new Vector2Int(x, size.y));
+                    this.setup.keyStartPositions.Add(new Vector2Int(x, -1));
             }
 
             GUILayout.Space(20);

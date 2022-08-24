@@ -7,17 +7,16 @@ namespace Idea_2.InputBlocks
     {
         public override IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid)
         {
-            Debug.Log(placeDirection.ToString());
-            this.t = 0;
+            key.transform.position = visualGrid.gridTransforms[id.x][id.y].position;
+         
+            float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + this.idDir.x, this.id.y + this.idDir.y);
 
-            Vector3 up = visualGrid.gridTransforms[0][1].position - visualGrid.gridTransforms[0][0].position,
-                right = visualGrid.gridTransforms[1][0].position - visualGrid.gridTransforms[0][0].position;
-            Vector3 dir = up * this.idDir.y + right * this.idDir.x;
+            Vector3 dir = UpDir(visualGrid) * this.idDir.y + RightDir(visualGrid) * this.idDir.x;
 
-            while (this.t < timePerBlock)
+            while (t < timePerBlock)
             {
-                this.t += Time.deltaTime;
+                t += Time.deltaTime;
 
                 key.transform.position += dir * (1 / timePerBlock * Time.deltaTime);
 

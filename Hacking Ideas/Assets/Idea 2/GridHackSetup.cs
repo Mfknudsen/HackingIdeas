@@ -12,7 +12,7 @@ namespace Idea_2
         public VisualGrid visualGrid;
         public Transform endPoint;
         [HideInInspector] public List<Vector2Int> keyStartPositions = new List<Vector2Int>();
-        
+
         public float timePerBlock = 1;
 
         [Space, Header("Visual")] public GameObject tilePrefab;
@@ -31,23 +31,24 @@ namespace Idea_2
 
         private void Start()
         {
-            foreach (Vector2Int pos in keyStartPositions)
+            foreach (Vector2Int index in keyStartPositions)
             {
                 GameObject obj = Instantiate(this.keyPrefab, transform);
                 obj.name = "Key";
 
                 GridKey key = obj.GetComponent<GridKey>();
 
-                key.id = pos;
+                key.id = index;
                 key.visualGrid = this.visualGrid;
                 key.inputBoard = this.inputBoard;
 
-                Vector3 position = this.visualGrid.gridTransforms[0][0].position;
-                Vector3 upDir = this.visualGrid.gridTransforms[0][1].position - position,
-                    rightDir = this.visualGrid.gridTransforms[1][0].position - position;
+                Vector3 upDir = this.visualGrid.gridTransforms[0][1].position -
+                                this.visualGrid.gridTransforms[0][0].position,
+                    rightDir = this.visualGrid.gridTransforms[1][0].position -
+                               this.visualGrid.gridTransforms[0][0].position;
 
                 key.transform.position = this.visualGrid.gridTransforms[0][0].position +
-                                         rightDir * pos.x + upDir * pos.y;
+                                         rightDir * index.x + upDir * index.y;
             }
         }
 
@@ -58,8 +59,10 @@ namespace Idea_2
             this.inputBoard.Setup(this.gridSize, this.tilePrefab);
             this.visualGrid.Setup(this.gridSize, this.tilePrefab);
 
+            this.keyStartPositions.Clear();
+
             int xSize = this.visualGrid.gridTransforms.Count,
-                ySize = this.visualGrid.gridTransforms[0].Count();
+                ySize = this.visualGrid.gridTransforms[0].Count;
             Vector2Int endID = new Vector2Int(
                 Random.Range(0, xSize),
                 Random.Range(0, ySize));

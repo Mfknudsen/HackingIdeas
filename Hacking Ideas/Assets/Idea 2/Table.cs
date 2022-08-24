@@ -26,7 +26,7 @@ namespace Idea_2
             obj.transform.Rotate(trans.up, Random.Range(0, 10));
 
             this.holding = obj;
-            spawning = false;
+            this.spawning = false;
         }
 
         private void Update()
@@ -41,7 +41,7 @@ namespace Idea_2
                 if (!this.spawning)
                     return;
 
-                if (Vector3.Distance(this.holding.transform.position, transform.position + Vector3.up * .25f) < 1)
+                if (Vector3.Distance(this.holding.transform.position, transform.position + Vector3.up * .25f) < .2f)
                     return;
             }
 

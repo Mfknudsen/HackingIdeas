@@ -19,9 +19,7 @@ namespace Idea_2
         private bool inserted;
         public Vector2Int id;
         private float speed;
-
-        protected float t = 0;
-
+        
         public abstract IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid);
 
         private void Start()
@@ -52,6 +50,10 @@ namespace Idea_2
                 Destroy(gameObject);
         }
 
+        public virtual void Reset()
+        {
+        }
+
         public Vector2Int idDir => this.placeDirection switch
         {
             PlaceDirection.MinusX => new Vector2Int(-1, 0),
@@ -59,5 +61,11 @@ namespace Idea_2
             PlaceDirection.PlusX => new Vector2Int(1, 0),
             _ => new Vector2Int(0, 1)
         };
+
+        protected static Vector3 RightDir(VisualGrid grid) =>
+            grid.gridTransforms[1][0].position - grid.gridTransforms[0][0].position;
+
+        protected static Vector3 UpDir(VisualGrid grid) =>
+            grid.gridTransforms[0][1].position - grid.gridTransforms[0][0].position;
     }
 }

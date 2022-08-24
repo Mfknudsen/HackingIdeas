@@ -9,6 +9,8 @@ namespace Idea_2.InputBlocks
 
         public override IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid)
         {
+            key.transform.position = visualGrid.gridTransforms[id.x][id.y].position;
+
             PlaceDirection switchedDir = this.placeDirection switch
             {
                 PlaceDirection.PlusX => switched ? PlaceDirection.MinusX : PlaceDirection.PlusX,
@@ -27,12 +29,9 @@ namespace Idea_2.InputBlocks
 
             switched = !switched;
 
-            t = 0;
+            float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + keyDir.x, this.id.y + keyDir.y);
-
-            Vector3 up = visualGrid.gridTransforms[0][1].position - visualGrid.gridTransforms[0][0].position,
-                right = visualGrid.gridTransforms[1][0].position - visualGrid.gridTransforms[0][0].position;
-            Vector3 dir = up * keyDir.y + right * keyDir.x;
+            Vector3 dir = UpDir(visualGrid) * keyDir.y + RightDir(visualGrid) * keyDir.x;
 
             while (t < timePerBlock)
             {
@@ -48,6 +47,17 @@ namespace Idea_2.InputBlocks
             transform.LookAt(trans.position - trans.forward, trans.up);
 
             inputBoard.Trigger(key, idToMoveTo);
+        }
+
+        public override void Reset()
+        {
+            if (!switched)
+                return;
+
+            switched = false;
+
+            Transform trans = transform;
+            transform.LookAt(trans.position - trans.forward, trans.up);
         }
     }
 }

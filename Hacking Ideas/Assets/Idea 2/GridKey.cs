@@ -11,6 +11,7 @@ namespace Idea_2
         public bool ready = true;
         public VisualGrid visualGrid;
         public PlaceDirection previousDirection;
+        public Coroutine currentCoroutine;
 
         private Vector2Int originID;
 
@@ -31,11 +32,13 @@ namespace Idea_2
         {
             this.id = this.originID;
 
+            gameObject.SetActive(true);
+            
             this.ready = true;
 
             Vector2Int checkFrom = new Vector2Int(
                 Mathf.Clamp(id.x, 0, this.visualGrid.gridTransforms.Count - 1),
-                Mathf.Clamp(id.y, 0, this.visualGrid.gridTransforms[0].Count() - 1));
+                Mathf.Clamp(id.y, 0, this.visualGrid.gridTransforms[0].Count - 1));
 
             Vector3 pos = this.visualGrid.gridTransforms[checkFrom.x][checkFrom.y].position;
 
@@ -53,7 +56,7 @@ namespace Idea_2
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(
                 Mathf.Clamp(this.id.x, 0, this.visualGrid.gridTransforms.Count - 1),
-                Mathf.Clamp(this.id.y, 0, this.visualGrid.gridTransforms[0].Count() - 1));
+                Mathf.Clamp(this.id.y, 0, this.visualGrid.gridTransforms[0].Count - 1));
             
             Vector3 dir = this.visualGrid.gridTransforms[idToMoveTo.x][idToMoveTo.y].position - transform.position;
 
@@ -74,7 +77,7 @@ namespace Idea_2
             this.visualGrid = visual;
 
             int xSize = this.visualGrid.gridTransforms.Count,
-                ySize = this.visualGrid.gridTransforms[0].Count();
+                ySize = this.visualGrid.gridTransforms[0].Count;
             Vector2Int keyStartID = new Vector2Int(
                 Random.Range(0, xSize),
                 Random.Range(0, ySize));

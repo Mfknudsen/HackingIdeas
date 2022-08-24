@@ -7,27 +7,31 @@ namespace Idea_2.InputBlocks
     {
         public override IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid)
         {
-            this.t = 0;
+            Transform keyTransform = key.transform;
+            keyTransform.position = visualGrid.gridTransforms[id.x][id.y].position;
+
+            float t = 0;
             Vector2Int idToMoveTo = id + this.idDir * 2;
 
-            Transform keyTransform = key.transform;
             Vector3 keySize = keyTransform.localScale;
             Vector3 scaleDir = keySize / (timePerBlock / 2);
 
-            while (this.t < timePerBlock / 2)
+            while (t < timePerBlock / 2)
             {
-                this.t += Time.deltaTime;
+                t += Time.deltaTime;
 
                 keyTransform.localScale -= scaleDir * Time.deltaTime;
 
                 yield return null;
             }
 
-            keyTransform.position = visualGrid.gridTransforms[idToMoveTo.x][ idToMoveTo.y].position;
+            keyTransform.position = keyTransform.position +
+                                    RightDir(visualGrid) * (this.idDir * 2).x +
+                                    UpDir(visualGrid) * (this.idDir * 2).y;
 
-            while (this.t < timePerBlock)
+            while (t < timePerBlock)
             {
-                this.t += Time.deltaTime;
+                t += Time.deltaTime;
 
                 keyTransform.localScale += scaleDir * Time.deltaTime;
 
@@ -35,9 +39,9 @@ namespace Idea_2.InputBlocks
             }
 
             keyTransform.localScale = keySize;
-            
+
             key.previousDirection = placeDirection;
-            
+
             this.inputBoard.Trigger(key, idToMoveTo);
         }
     }

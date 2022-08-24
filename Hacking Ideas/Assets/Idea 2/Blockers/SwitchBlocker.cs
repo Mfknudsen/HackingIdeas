@@ -10,6 +10,8 @@ namespace Idea_2.Blockers
         public override IEnumerator Trigger(GridKey key, float timePerBlock, VisualGrid visualGrid,
             InputBoard inputBoard)
         {
+            key.transform.position = visualGrid.gridTransforms[id.x][id.y].position;
+            
             PlaceDirection switchedDir = this.placeDirection switch
             {
                 PlaceDirection.PlusX => switched ? PlaceDirection.MinusX : PlaceDirection.PlusX,
@@ -17,7 +19,7 @@ namespace Idea_2.Blockers
                 PlaceDirection.PlusY => switched ? PlaceDirection.MinusY : PlaceDirection.PlusY,
                 _ => switched ? PlaceDirection.PlusY : PlaceDirection.MinusY,
             };
-            
+
             Vector2Int keyDir = switchedDir switch
             {
                 PlaceDirection.MinusX => new Vector2Int(-1, 0),
@@ -30,10 +32,8 @@ namespace Idea_2.Blockers
 
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + keyDir.x, this.id.y + keyDir.y);
+            Vector3 dir = UpDir(visualGrid) * keyDir.y + RightDir(visualGrid) * keyDir.x;
 
-            Vector3 up = visualGrid.gridTransforms[0][1].position - visualGrid.gridTransforms[0][0].position,
-                right = visualGrid.gridTransforms[1][0].position - visualGrid.gridTransforms[0][0].position;
-            Vector3 dir = up * keyDir.y + right * keyDir.x;
 
             while (t < timePerBlock)
             {
@@ -46,9 +46,20 @@ namespace Idea_2.Blockers
 
             key.previousDirection = placeDirection;
             Transform trans = transform;
-            transform.LookAt(trans.position - trans.forward);
+            transform.LookAt(trans.position - trans.forward, trans.up);
 
             inputBoard.Trigger(key, idToMoveTo);
+        }
+
+        public override void Reset()
+        {
+            if (!switched)
+                return;
+
+            switched = false;
+
+            Transform trans = transform;
+            trans.LookAt(trans.position - trans.forward, trans.up);
         }
     }
 }

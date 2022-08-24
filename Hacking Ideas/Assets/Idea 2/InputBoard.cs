@@ -28,12 +28,22 @@ namespace Idea_2
     {
         public GridHackSetup setup;
         [SerializeField] private float placeDist, sizeScale = 1;
-        private Vector2Int gridSize;
+        [SerializeField, HideInInspector] private Vector2Int gridSize;
         [SerializeField] private GridKey endPoint;
 
         [SerializeField, HideInInspector] private List<Storage<InputBlock>> gridBlocks;
         [SerializeField, HideInInspector] public List<Storage<Transform>> gridTransforms;
         [SerializeField, HideInInspector] public List<Storage<BlockerType>> blockerTypes;
+
+        private int keysInGoal;
+
+        private void OnValidate()
+        {
+            gridSize = new Vector2Int(
+                Mathf.Clamp(gridSize.x, 2, 100),
+                Mathf.Clamp(gridSize.y, 2, 100)
+            );
+        }
 
         public void Setup(Vector2Int size, GameObject tilePrefab)
         {
@@ -88,7 +98,7 @@ namespace Idea_2
         {
             foreach (Storage<InputBlock> t in this.gridBlocks)
             {
-                for (int y = 0; y < this.gridBlocks[0].Count(); y++)
+                for (int y = 0; y < this.gridBlocks[0].Count; y++)
                 {
                     if (t[y] != block) continue;
 
@@ -102,35 +112,46 @@ namespace Idea_2
         {
             if (id == this.endPoint.id)
             {
+                key.gameObject.SetActive(false);
+                this.keysInGoal++;
+
+                if (this.keysInGoal != this.setup.keyStartPositions.Count) return;
+
+                key.gameObject.SetActive(true);
                 key.transform.position = transform.parent.GetComponentInChildren<Button>().transform.position;
+
                 return;
             }
 
             if (id.x < 0 || id.y < 0 ||
-                id.x == this.gridSize.x || id.y == this.gridSize.y ||
+                id.x >= this.gridSize.x || id.y >= this.gridSize.y ||
                 (this.gridBlocks[id.x][id.y] == null && this.blockerTypes[id.x][id.y] == BlockerType.None))
             {
-                key.Reset();
+                Reset();
+
                 return;
             }
 
-            if (blockerTypes[id.x][id.y] == BlockerType.Total)
+            if (this.blockerTypes[id.x][id.y] == BlockerType.Total)
             {
-                key.Reset();
+                Reset();
+
                 return;
             }
 
-            if (blockerTypes[id.x][id.y] != BlockerType.None)
+            if (this.blockerTypes[id.x][id.y] != BlockerType.None)
             {
-                StartCoroutine(gridTransforms[id.x][id.y].GetComponentInChildren<Blocker>().Trigger(
-                    key,
-                    this.setup.timePerBlock,
-                    this.setup.visualGrid,
-                    this));
+                key.currentCoroutine = StartCoroutine(this.gridTransforms[id.x][id.y].GetComponentInChildren<Blocker>()
+                    .Trigger(
+                        key,
+                        this.setup.timePerBlock,
+                        this.setup.visualGrid,
+                        this));
+
                 return;
             }
 
-            StartCoroutine(
+            key.currentCoroutine = StartCoroutine(
                 this.gridBlocks[id.x][id.y].TriggerInput(
                     key,
                     this.setup.timePerBlock,
@@ -144,7 +165,7 @@ namespace Idea_2
 
             for (int x = 0; x < this.gridTransforms.Count; x++)
             {
-                for (int y = 0; y < this.gridTransforms[0].Count(); y++)
+                for (int y = 0; y < this.gridTransforms[0].Count; y++)
                 {
                     if (this.blockerTypes[x][y] != BlockerType.None)
                         continue;
@@ -221,6 +242,25 @@ namespace Idea_2
 
             return true;
         }
+
+        private void Reset()
+        {
+            foreach (GridKey g in transform.parent.GetComponentsInChildren<GridKey>())
+            {
+                if (g is EndGoal)
+                    continue;
+
+                if (g.currentCoroutine != null)
+                    StopCoroutine(g.currentCoroutine);
+                g.Reset();
+            }
+
+            foreach (Blocker b in transform.parent.GetComponentsInChildren<Blocker>())
+                b.Reset();
+
+            foreach (InputBlock inputBlock in gridBlocks.SelectMany(b => b.list).Where(b => b != null))
+                inputBlock.Reset();
+        }
     }
 
     [Serializable]
@@ -244,9 +284,6 @@ namespace Idea_2
             list[index] = set;
         }
 
-        public int Count()
-        {
-            return list.Count;
-        }
+        public int Count => list.Count;
     }
 }

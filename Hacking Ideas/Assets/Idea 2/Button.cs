@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Idea_2
 {
     public class Button : VrGrabObject
@@ -6,8 +9,20 @@ namespace Idea_2
         {
             transform.parent = this.originParent;
 
-            foreach (GridKey key in this.originParent.GetComponentsInChildren<GridKey>())
-                key.TriggerFirst();
+            List<GridKey> keys = this.originParent.GetComponentsInChildren<GridKey>().ToList();
+
+            bool ready = keys.Any(k => !k.ready);
+
+            foreach (GridKey gridKey in keys)
+            {
+                if (gridKey is EndGoal)
+                    continue;
+
+                if (ready)
+                    gridKey.TriggerFirst();
+                else
+                    gridKey.Reset();
+            }
         }
 
         protected override void OnRelease()

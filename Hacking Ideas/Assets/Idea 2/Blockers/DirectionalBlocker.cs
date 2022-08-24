@@ -8,6 +8,8 @@ namespace Idea_2.Blockers
         public override IEnumerator Trigger(GridKey key, float timePerBlock, VisualGrid visualGrid,
             InputBoard inputBoard)
         {
+            key.transform.position = visualGrid.gridTransforms[id.x][id.y].position;
+            
             if (key.previousDirection == placeDirection)
             {
                 key.Reset();
@@ -24,10 +26,8 @@ namespace Idea_2.Blockers
 
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + keyDir.x, this.id.y + keyDir.y);
+            Vector3 dir = UpDir(visualGrid) * keyDir.y + RightDir(visualGrid) * keyDir.x;
 
-            Vector3 up = visualGrid.gridTransforms[0][1].position - visualGrid.gridTransforms[0][0].position,
-                right = visualGrid.gridTransforms[1][0].position - visualGrid.gridTransforms[0][0].position;
-            Vector3 dir = up * keyDir.y + right * keyDir.x;
 
             while (t < timePerBlock)
             {
