@@ -63,11 +63,11 @@ namespace Idea_1
             set.indexDir = 0;
             set.readyNextUpdate = currentLine.readyNextUpdate;
 
-            if (transferTo != TransferTo.MIDDLE)
+            if (transferTo != TransferTo.Middle)
             {
-                set.index = transferTo == TransferTo.BACK ? 1 : set.calculatedPath.Length - 2;
+                set.index = transferTo == TransferTo.Back ? 1 : set.calculatedPath.Length - 2;
                 set.splitIndex = 0;
-                set.onSplitedPath = false;
+                set.onSplitPath = false;
 
                 transform.position = set.calculatedPath[set.index];
 
@@ -80,7 +80,7 @@ namespace Idea_1
             {
                 set.splitIndex = set.splitCalculatedPath.Length - 2;
                 set.index = set.crossIndex;
-                set.onSplitedPath = true;
+                set.onSplitPath = true;
 
                 transform.position = set.splitCalculatedPath[set.splitIndex];
 
@@ -91,9 +91,9 @@ namespace Idea_1
 
             if (this.setup.playerControls == Controls.V2)
             {
-                if (transferTo != TransferTo.BACK && set.indexDir == 1)
+                if (transferTo != TransferTo.Back && set.indexDir == 1)
                     set.indexDir = -1;
-                else if (transferTo == TransferTo.BACK && set.indexDir == -1)
+                else if (transferTo == TransferTo.Back && set.indexDir == -1)
                     set.indexDir = 1;
             }
         }
@@ -113,7 +113,7 @@ namespace Idea_1
 
             this.facingHigherIndexPoint = true;
 
-            currentLine.onSplitedPath = false;
+            currentLine.onSplitPath = false;
             currentLine.splitIndex = 0;
         }
 

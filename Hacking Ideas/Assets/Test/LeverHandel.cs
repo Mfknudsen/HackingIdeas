@@ -14,8 +14,10 @@ namespace Test
         public Transform parentOfObject; //The original parent of this object.
 
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+            
             parentOfObject = transform.parent; //Get the parent transform.
         }
 

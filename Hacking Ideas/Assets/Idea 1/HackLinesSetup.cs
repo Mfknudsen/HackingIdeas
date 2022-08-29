@@ -1,50 +1,52 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Idea_1
 {
-    public enum Controls { V1, V2 }
+    public enum Controls
+    {
+        V1,
+        V2
+    }
 
     public class HackLinesSetup : MonoBehaviour
     {
         #region Values
 
-        [Header("Lines")]
-        [SerializeField] private int lineCount = 5;
+        [Header("Lines")] [SerializeField] private int lineCount = 5;
+
         [SerializeField] private float maxAngle = 5;
-        //- Minimum distance between two points in a line
-        [SerializeField] private float minPointDist = 1;
+
         [Range(.2f, 1f), SerializeField] private float bezierDist = .2f;
         [SerializeField, HideInInspector] private List<Line> allLines = new List<Line>();
 
-        [Space, Header("Connections")]
-        [Range(0f, 1f), SerializeField] private float chanceOfSelfConnect = .1f;
-        [SerializeField] private int maxSelfConnects = 2;
-        private int currentSelfConnects = 0;
+        [Space, Header("Visual")] [SerializeField]
+        private GameObject gatePrefab;
 
-        [Space, Header("Visual")]
-        [SerializeField] private GameObject gatePrefab;
         [SerializeField] private Material lineMat;
         [SerializeField] private float startSize = .05f, endSize = .05f;
-        [SerializeField] private Color[] colors = { Color.white, Color.red, Color.blue, Color.green, Color.grey, Color.yellow, Color.cyan, Color.magenta };
+
+        [SerializeField] private Color[] colors =
+            { Color.white, Color.red, Color.blue, Color.green, Color.grey, Color.yellow, Color.cyan, Color.magenta };
+
         [SerializeField] private Transform generationReferencePoint;
 
-        [Space, Header("Goal")]
-        [SerializeField] private GameObject temp;
+        [Space, Header("Goal")] [SerializeField]
+        private GameObject temp;
+
         [SerializeField] private int sequenceLength = 5;
         [SerializeField] private Transform goalSequenceTransform, currentSequenceTransform;
         [SerializeField] private List<Color> goalSequence = new List<Color>(), currentSequence = new List<Color>();
         [SerializeField] private Material sequenceMat;
 
-        [Space, Header("Player")]
-        public Transform playerArrow;
+        [Space, Header("Player")] public Transform playerArrow;
         public Controls playerControls;
 
 #if UNITY_EDITOR
-        [Space, Header("Debug")]
-        public bool displayBounds;
-        public bool displayLineGizmos;
+        [Space, Header("Debug")] public bool displayLineGizmos;
         public Color frontColor = Color.green, backColor = Color.blue;
+        private static readonly int ColorID = Shader.PropertyToID("_Color");
 #endif
 
         #endregion
@@ -53,7 +55,7 @@ namespace Idea_1
 
         private void OnValidate()
         {
-            //Update allready spawned lines
+            //Update already spawned lines
             foreach (LineRenderer r in GetComponentsInChildren<LineRenderer>())
             {
                 r.startWidth = this.startSize;
@@ -64,7 +66,7 @@ namespace Idea_1
 
                 if (l == null) continue;
 
-                l.DisplayGizmo = this.displayLineGizmos;
+                l.displayGizmo = this.displayLineGizmos;
                 l.frontColor = this.frontColor;
                 l.backColor = this.backColor;
 
@@ -75,7 +77,7 @@ namespace Idea_1
 #if UNITY_EDITOR
             foreach (Line l in GetComponentsInChildren<Line>())
             {
-                l.DisplayGizmo = this.displayLineGizmos;
+                l.displayGizmo = this.displayLineGizmos;
                 l.frontColor = this.frontColor;
                 l.backColor = this.backColor;
             }
@@ -84,9 +86,7 @@ namespace Idea_1
 
         private void Start()
         {
-            List<GameObject> toDelete = new List<GameObject>();
-            foreach (Transform t in this.goalSequenceTransform)
-                toDelete.Add(t.gameObject);
+            List<GameObject> toDelete = (from Transform t in this.goalSequenceTransform select t.gameObject).ToList();
 
             foreach (GameObject o in toDelete)
                 DestroyImmediate(o);
@@ -94,14 +94,13 @@ namespace Idea_1
             for (int i = 0; i < this.goalSequence.Count; i++)
             {
                 Color c = this.goalSequence[i];
-                GameObject obj = Instantiate(this.temp);
-                obj.transform.parent = this.goalSequenceTransform;
+                GameObject obj = Instantiate(this.temp, this.goalSequenceTransform);
                 obj.transform.localPosition = Vector3.zero;
                 obj.transform.position += this.goalSequenceTransform.forward * (i * .1f);
                 obj.transform.rotation = this.goalSequenceTransform.rotation;
                 Material mat = obj.GetComponent<Renderer>().material = new Material(sequenceMat);
                 mat.EnableKeyword("_Color");
-                mat.SetColor("_Color", c);
+                mat.SetColor(ColorID, c);
             }
 
             ResetCurrentSequence();
@@ -131,17 +130,16 @@ namespace Idea_1
 
             this.currentSequence.Add(toAdd);
 
-            GameObject obj = Instantiate(this.temp);
-            obj.transform.parent = this.currentSequenceTransform;
+            GameObject obj = Instantiate(this.temp, this.currentSequenceTransform);
             obj.transform.localPosition = Vector3.zero;
             obj.transform.position += this.currentSequenceTransform.forward * ((this.currentSequence.Count - 1) * .1f);
             obj.transform.rotation = this.currentSequenceTransform.rotation;
             Material mat = obj.GetComponent<Renderer>().material = new Material(sequenceMat);
             mat.EnableKeyword("_Color");
-            mat.SetColor("_Color", toAdd);
+            mat.SetColor(ColorID, toAdd);
 
             if (this.currentSequence.Count == this.goalSequence.Count)
-                key.SetCurrentLine(GetComponentInChildren<EndLine>(), TransferTo.FRONT, 1);
+                key.SetCurrentLine(GetComponentInChildren<EndLine>(), TransferTo.Front, 1);
         }
 
         #endregion
@@ -163,20 +161,35 @@ namespace Idea_1
             //Setup new lines
             for (int i = 0; i < lineCount; i++)
             {
-                GameObject obj = new GameObject("Line");
-                obj.transform.parent = transform;
-                obj.transform.localPosition = Vector3.zero;
+                GameObject obj = new GameObject("Line")
+                {
+                    transform =
+                    {
+                        parent = transform,
+                        localPosition = Vector3.zero
+                    }
+                };
 
                 Line l = obj.AddComponent<Line>();
                 l.setup = this;
                 this.allLines.Add(l);
 
-                GameObject lineRend = new GameObject("Rendere");
-                lineRend.transform.parent = obj.transform;
+                GameObject lineRend = new GameObject("Renderer")
+                {
+                    transform =
+                    {
+                        parent = obj.transform
+                    }
+                };
                 lineRend.AddComponent<LineRenderer>();
                 lineRend.AddComponent<PathCreator>();
-                lineRend = new GameObject("Rendere");
-                lineRend.transform.parent = obj.transform;
+                lineRend = new GameObject("Renderer")
+                {
+                    transform =
+                    {
+                        parent = obj.transform
+                    }
+                };
                 lineRend.AddComponent<LineRenderer>();
                 lineRend.AddComponent<PathCreator>();
 
@@ -205,15 +218,13 @@ namespace Idea_1
                     Random.Range(-this.maxAngle, this.maxAngle),
                     Random.Range(-this.maxAngle * 2, this.maxAngle * 2));
 
-                RaycastHit hit;
-
                 while (!IsValidAngle(angle, usedAngles))
                     angle = new Vector3(
                         -1,
                         Random.Range(-this.maxAngle, this.maxAngle),
                         Random.Range(-this.maxAngle * 2, this.maxAngle * 2));
 
-                if (Physics.Raycast(transform.position, angle.normalized, out hit, 100))
+                if (Physics.Raycast(transform.position, angle.normalized, out RaycastHit hit, 100))
                 {
                     front = hit.point;
                     fNormal = hit.normal;
@@ -267,8 +278,12 @@ namespace Idea_1
                 frontGate.transform.LookAt(front + fNormal);
                 middleGate.transform.LookAt(middle + mNormal);
                 backGate.transform.LookAt(back + bNormal);
+
+                // ReSharper disable once Unity.InefficientPropertyAccess
                 frontGate.transform.position += frontGate.transform.forward * 0.2f;
+                // ReSharper disable once Unity.InefficientPropertyAccess
                 middleGate.transform.position += middleGate.transform.forward * 0.2f;
+                // ReSharper disable once Unity.InefficientPropertyAccess
                 backGate.transform.position += backGate.transform.forward * 0.2f;
 
                 l.frontGate = frontGate;
@@ -280,13 +295,12 @@ namespace Idea_1
 
             //Setup connections between points
             EndLine end = transform.GetComponentInChildren<EndLine>();
-            this.currentSelfConnects = 0;
             List<Line> lines = new List<Line>();
             lines.AddRange(transform.GetComponentsInChildren<Line>());
             //- Dont want to connect the end
             lines.Remove(end);
 
-            //- Each line connect independenly without caring of others connections
+            //- Each line connect independently without caring of others connections
             foreach (Line l in lines)
             {
                 List<Line> others = new List<Line>();
@@ -309,7 +323,7 @@ namespace Idea_1
 
             //Validate connections by insuring all can be reached from the first connected line.
             int runs = 0;
-            //- Always returns true when validating but use limited runs to insure while loop is not infinit. 
+            //- Always returns true when validating but use limited runs to insure while loop is not infinity. 
             while (runs < 100)
             {
                 if (ValidateConnections(lines))
@@ -363,41 +377,12 @@ namespace Idea_1
             this.currentSequence.Add(this.goalSequence[0]);
         }
 
-        private bool IsValidAngle(Vector3 angle, List<Vector3> preAngles)
+        private static bool IsValidAngle(Vector3 angle, IEnumerable<Vector3> preAngles)
         {
-            foreach (Vector3 p in preAngles)
-            {
-                if (Vector3.Angle(angle, p) < 10)
-                    return false;
-            }
-
-            return true;
+            return preAngles.Any(p => !(Vector3.Angle(angle, p) < 10));
         }
 
-        private Vector3 GetValidPointPosition(Vector3 otherPos, List<Vector3> usedPos)
-        {
-            //Valid point position is a position with a distance from the other point position higher then the minimum distance.
-            Vector3 result = Vector3.zero;
-            Vector3 angle = new Vector3(-1, Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-            if (Physics.Raycast(transform.position, angle.normalized, out RaycastHit hit, 100))
-                result = hit.point;
-
-            float lowestDist = 10;
-
-            for (int i = 0; i < usedPos.Count; i++)
-            {
-                float dist = Vector3.Distance(result, usedPos[i]);
-                if (dist < lowestDist)
-                    lowestDist = dist;
-
-                if (dist <= this.minPointDist)
-                    break;
-            }
-
-            return Vector3.Distance(result, otherPos) > this.minPointDist && result != Vector3.zero ? result : GetValidPointPosition(otherPos, usedPos);
-        }
-
-        private bool ValidateConnections(List<Line> lines)
+        private static bool ValidateConnections(IReadOnlyList<Line> lines)
         {
             //From the first line where the ball start, it will check if all other lines can be reached.
             List<Line> toCheck = new List<Line>() { lines[0] }, checkedLines = new List<Line>();
@@ -463,14 +448,13 @@ namespace Idea_1
             this.currentSequence.Add(this.goalSequence[0]);
 
             Color c = this.currentSequence[0];
-            GameObject obj = Instantiate(this.temp);
-            obj.transform.parent = this.currentSequenceTransform;
+            GameObject obj = Instantiate(this.temp, this.currentSequenceTransform);
             obj.transform.localPosition = Vector3.zero;
             obj.transform.rotation = this.currentSequenceTransform.rotation;
 
             Material mat = obj.GetComponent<Renderer>().material = new Material(sequenceMat);
             mat.EnableKeyword("_Color");
-            mat.SetColor("_Color", c);
+            mat.SetColor(ColorID, c);
         }
 
         #endregion

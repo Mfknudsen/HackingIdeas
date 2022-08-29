@@ -80,7 +80,7 @@ public class VRGrab : MonoBehaviour
 
         if (this.holdingObj == null) return;
 
-        if (this.holdingObj.GetComponentInParent<VRGrab>() is { } g)
+        if (this.holdingObj.GetComponentInParent<VRGrab>() is { } g && g != this)
             g.holdingObj = null;
 
         this.holdingObj.Grab(transform);

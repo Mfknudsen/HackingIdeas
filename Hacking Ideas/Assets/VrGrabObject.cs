@@ -4,7 +4,9 @@ public abstract class VrGrabObject : MonoBehaviour
 {
     protected Transform originParent;
 
-    private void Start()
+    protected bool grabbed;
+    
+    protected virtual void Start()
     {
         this.originParent = transform.parent;
     }
@@ -14,6 +16,8 @@ public abstract class VrGrabObject : MonoBehaviour
         transform.parent = newParent;
         
         OnGrab();
+
+        grabbed = true;
     }
 
     public void Release()
@@ -21,6 +25,8 @@ public abstract class VrGrabObject : MonoBehaviour
         transform.parent = originParent;
         
         OnRelease();
+
+        grabbed = false;
     }
 
     protected abstract void OnGrab();

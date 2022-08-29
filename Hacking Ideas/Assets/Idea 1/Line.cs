@@ -3,7 +3,12 @@ using UnityEngine;
 
 namespace Idea_1
 {
-    public enum TransferTo { FRONT, MIDDLE, BACK }
+    public enum TransferTo
+    {
+        Front,
+        Middle,
+        Back
+    }
 
     public class Line : MonoBehaviour
     {
@@ -17,22 +22,21 @@ namespace Idea_1
         public List<Vector3> totalPoints = new List<Vector3>(), splitTotalPoints = new List<Vector3>();
         private Path bezierPath, splitPath;
         public Vector3[] calculatedPath, splitCalculatedPath;
-        public bool onSplitedPath = false;
+        public bool onSplitPath;
 
-        [Space]
-        public Line frontTransfer;
+        [Space] public Line frontTransfer;
         public int frontTransferTo;
         public Line middleTransfer;
         public int middleTransferTo;
         public Line backTransfer;
         public int backTransferTo;
 
-        private LineRenderer[] lineRenderes;
+        private LineRenderer[] lineRenders;
 
         public int index, splitIndex, crossIndex;
 
         //V1
-        bool disableCrossDirectionUpdate;
+        private bool disableCrossDirectionUpdate;
 
         //V2
         public Vector3 playerDir = Vector3.zero;
@@ -40,7 +44,7 @@ namespace Idea_1
         public bool readyNextUpdate;
 
 #if UNITY_EDITOR
-        public bool DisplayGizmo = true;
+        public bool displayGizmo = true;
         public Color frontColor = Color.green, backColor = Color.blue, middleColor = Color.yellow;
 #endif
 
@@ -50,12 +54,12 @@ namespace Idea_1
 
         private void Start()
         {
-            this.lineRenderes = GetComponentsInChildren<LineRenderer>();
+            this.lineRenders = GetComponentsInChildren<LineRenderer>();
 
-            for (int i = 0; i < lineRenderes.Length; i++)
+            for (int i = 0; i < lineRenders.Length; i++)
             {
-                this.lineRenderes[i].startColor = this.color;
-                this.lineRenderes[i].endColor = this.color;
+                this.lineRenders[i].startColor = this.color;
+                this.lineRenders[i].endColor = this.color;
             }
 
             if (this.frontGate != null && this.frontTransfer != null)
@@ -71,14 +75,18 @@ namespace Idea_1
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            if (!this.DisplayGizmo) return;
+            if (!this.displayGizmo) return;
 
             if (frontTransfer != null)
             {
                 Gizmos.color = this.frontColor;
-                Vector3 dir = (this.frontTransferTo == 0 ? this.frontTransfer.front :
-                    this.frontTransferTo == 1 ? this.frontTransfer.middle :
-                    this.frontTransfer.back) - this.front;
+                Vector3 dir = this.frontTransferTo switch
+                {
+                    0 => this.frontTransfer.front,
+                    1 => this.frontTransfer.middle,
+                    _ => this.frontTransfer.back
+                } - this.front;
+
                 Gizmos.DrawLine(this.front, this.front + dir / 2);
                 Gizmos.DrawWireSphere(this.front, .2f);
 
@@ -89,9 +97,13 @@ namespace Idea_1
             if (middleTransfer != null)
             {
                 Gizmos.color = this.middleColor;
-                Vector3 dir = (this.middleTransferTo == 0 ? this.middleTransfer.front :
-                    this.middleTransferTo == 1 ? this.middleTransfer.middle :
-                    this.middleTransfer.back) - this.middle;
+                Vector3 dir = this.middleTransferTo switch
+                {
+                    0 => this.middleTransfer.front,
+                    1 => this.middleTransfer.middle,
+                    _ => this.middleTransfer.back
+                } - this.middle;
+
                 Gizmos.DrawLine(this.middle, this.middle + dir / 2);
                 Gizmos.DrawWireSphere(this.middle, .2f);
 
@@ -102,9 +114,13 @@ namespace Idea_1
             if (backTransfer != null)
             {
                 Gizmos.color = this.backColor;
-                Vector3 dir = (this.backTransferTo == 0 ? this.backTransfer.front :
-                    this.backTransferTo == 1 ? this.backTransfer.middle :
-                    this.backTransfer.back) - this.back;
+                Vector3 dir = this.backTransferTo switch
+                {
+                    0 => this.backTransfer.front,
+                    1 => this.backTransfer.middle,
+                    _ => this.backTransfer.back
+                } - this.back;
+
                 Gizmos.DrawLine(this.back, this.back + dir / 2);
                 Gizmos.DrawWireSphere(this.back, .2f);
 
@@ -127,6 +143,7 @@ namespace Idea_1
         {
             this.back = set;
         }
+
         #endregion
 
         #region In
@@ -142,7 +159,7 @@ namespace Idea_1
                 case Controls.V2:
                     V2Controls(key, dir);
                     break;
-            };
+            }
         }
 
         public void SetupExtraPoints(Transform refPoint, float dist)
@@ -150,13 +167,13 @@ namespace Idea_1
             if (this is EndLine)
                 return;
 
-            float distFromGate = 2.5f;
+            const float distFromGate = 2.5f;
 
             this.totalPoints.Clear();
             this.totalPoints.Add(this.back);
             this.totalPoints.Add(this.back + this.bNormal * distFromGate);
 
-            int totalPointCount = 4;
+            const int totalPointCount = 4;
 
             Vector3 between = this.front + this.fNormal * distFromGate - this.totalPoints[1];
 
@@ -164,7 +181,8 @@ namespace Idea_1
             {
                 Vector3 newPos = totalPoints[1] +
                                  between / totalPointCount * (i + 1) +
-                                 Vector3.Cross((this.fNormal + this.bNormal) / 2, between.normalized) * Random.Range(0f, 1f) +
+                                 Vector3.Cross((this.fNormal + this.bNormal) / 2, between.normalized) *
+                                 Random.Range(0f, 1f) +
                                  Vector3.Lerp(this.fNormal, this.bNormal, Random.Range(0f, .25f));
 
                 this.totalPoints.Add(newPos);
@@ -178,29 +196,34 @@ namespace Idea_1
             this.bezierPath.MovePoint(0, this.totalPoints[0]);
 
             //Move points includes control points between position points.
-            //- Between two position points there will be two controll points
+            //- Between two position points there will be two control points
             this.bezierPath.MovePoint(3, this.totalPoints[1]);
 
             for (int i = 2; i < this.totalPoints.Count; i++)
                 this.bezierPath.AddSegment(this.totalPoints[i]);
 
-            this.calculatedPath = this.bezierPath.CalculateEvenlySpacedPoints(dist, 1);
+            this.calculatedPath = this.bezierPath.CalculateEvenlySpacedPoints(dist);
 
-            this.lineRenderes = GetComponentsInChildren<LineRenderer>();
+            this.lineRenders = GetComponentsInChildren<LineRenderer>();
 
-            this.lineRenderes[0].positionCount = this.calculatedPath.Length;
+            this.lineRenders[0].positionCount = this.calculatedPath.Length;
 
-            this.lineRenderes[0].SetPositions(this.calculatedPath);
+            this.lineRenders[0].SetPositions(this.calculatedPath);
 
             //Split Path
             this.splitTotalPoints = new List<Vector3>();
-            int splitIndex = Mathf.FloorToInt(totalPointCount / 2) + 2;
-            this.splitTotalPoints.Add(totalPoints[splitIndex]);
+            int splitCalcIndex = Mathf.FloorToInt(totalPointCount / 2f) + 2;
+            this.splitTotalPoints.Add(totalPoints[splitCalcIndex]);
 
-            refPoint.position += Vector3.up * (this.totalPoints[splitIndex].y - refPoint.position.y);
-            this.splitTotalPoints.Add(this.splitTotalPoints[0] + Vector3.Cross(this.totalPoints[splitIndex + 1] - this.totalPoints[splitIndex], refPoint.position - this.totalPoints[splitIndex]).normalized);
+            Vector3 refPos = refPoint.position;
+            refPos += Vector3.up * (this.totalPoints[splitCalcIndex].y - refPos.y);
+            refPoint.position = refPos;
+            this.splitTotalPoints.Add(this.splitTotalPoints[0] + Vector3
+                .Cross(this.totalPoints[splitCalcIndex + 1] - this.totalPoints[splitCalcIndex],
+                    refPos - this.totalPoints[splitCalcIndex]).normalized);
 
-            this.splitTotalPoints.Add(this.splitTotalPoints[1] + (this.middle + this.mNormal * distFromGate - this.splitTotalPoints[1]) / 2);
+            this.splitTotalPoints.Add(this.splitTotalPoints[1] +
+                                      (this.middle + this.mNormal * distFromGate - this.splitTotalPoints[1]) / 2);
 
             this.splitPath = GetComponentsInChildren<PathCreator>()[1].path;
 
@@ -213,14 +236,15 @@ namespace Idea_1
             this.splitPath.AddSegment(this.middle + this.mNormal * distFromGate);
             this.splitPath.AddSegment(this.middle);
 
-            this.splitCalculatedPath = this.splitPath.CalculateEvenlySpacedPoints(dist, 1);
+            this.splitCalculatedPath = this.splitPath.CalculateEvenlySpacedPoints(dist);
 
-            this.lineRenderes[1].positionCount = this.splitCalculatedPath.Length;
-            this.lineRenderes[1].SetPositions(this.splitCalculatedPath);
+            this.lineRenders[1].positionCount = this.splitCalculatedPath.Length;
+            this.lineRenders[1].SetPositions(this.splitCalculatedPath);
 
             for (int i = 0; i < this.calculatedPath.Length; i++)
             {
-                if (Vector3.Distance(this.calculatedPath[i], this.splitCalculatedPath[0]) >= Vector3.Distance(this.calculatedPath[this.crossIndex], this.splitCalculatedPath[0]))
+                if (Vector3.Distance(this.calculatedPath[i], this.splitCalculatedPath[0]) >=
+                    Vector3.Distance(this.calculatedPath[this.crossIndex], this.splitCalculatedPath[0]))
                     continue;
 
                 this.crossIndex = i;
@@ -231,27 +255,30 @@ namespace Idea_1
         {
             Vector3 keyPos = key.transform.position;
 
-            if (this.index == 0 || this.index == this.calculatedPath.Length - 1 || this.splitIndex == this.splitCalculatedPath.Length - 1)
+            if (this.index == 0 || this.index == this.calculatedPath.Length - 1 ||
+                this.splitIndex == this.splitCalculatedPath.Length - 1)
             {
                 key.transform.position = Vector3.Lerp(keyPos, this.calculatedPath[this.crossIndex], Time.deltaTime);
 
                 Color c;
 
-                float fDist = Vector3.Distance(keyPos, this.front), mDist = Vector3.Distance(keyPos, this.middle), bDist = Vector3.Distance(keyPos, this.back);
+                float fDist = Vector3.Distance(keyPos, this.front),
+                    mDist = Vector3.Distance(keyPos, this.middle),
+                    bDist = Vector3.Distance(keyPos, this.back);
 
                 if (fDist < bDist && fDist < mDist)
                 {
-                    key.SetCurrentLine(this.frontTransfer, TransferTo.FRONT, dir);
+                    key.SetCurrentLine(this.frontTransfer, TransferTo.Front, dir);
                     c = this.frontTransfer.color;
                 }
                 else if (mDist < bDist)
                 {
-                    key.SetCurrentLine(this.middleTransfer, TransferTo.MIDDLE, dir);
+                    key.SetCurrentLine(this.middleTransfer, TransferTo.Middle, dir);
                     c = this.middleTransfer.color;
                 }
                 else
                 {
-                    key.SetCurrentLine(this.backTransfer, TransferTo.BACK, dir);
+                    key.SetCurrentLine(this.backTransfer, TransferTo.Back, dir);
                     c = this.backTransfer.color;
                 }
 
@@ -259,6 +286,8 @@ namespace Idea_1
 
                 return;
             }
+
+            Transform keyTrans = key.transform;
 
             if (this.index == this.crossIndex && this.splitIndex == 0)
             {
@@ -269,21 +298,20 @@ namespace Idea_1
 
                 if (this.disableCrossDirectionUpdate)
                 {
-
                     if (frontDist < curDist && frontDist < middleDist && frontDist < backDist)
                     {
                         this.index++;
-                        this.onSplitedPath = false;
+                        this.onSplitPath = false;
                     }
                     else if (middleDist < curDist && middleDist < frontDist && middleDist < backDist)
                     {
                         this.splitIndex++;
-                        this.onSplitedPath = true;
+                        this.onSplitPath = true;
                     }
                     else if (backDist < curDist && backDist < frontDist && backDist < middleDist)
                     {
                         this.index--;
-                        this.onSplitedPath = false;
+                        this.onSplitPath = false;
                     }
 
                     return;
@@ -291,12 +319,10 @@ namespace Idea_1
 
                 this.disableCrossDirectionUpdate = true;
 
-                Vector3 playerDir = this.setup.playerArrow.forward,
+                Vector3 playerArrowDir = this.setup.playerArrow.forward,
                     frontDir = (this.calculatedPath[this.index + 1] - keyPos).normalized,
                     middleDir = (this.splitCalculatedPath[1] - keyPos).normalized,
                     backDir = (this.calculatedPath[this.index - 1] - keyPos).normalized;
-
-                bool movingHigher = (key.facingHigherIndexPoint ? 1 : -1) * dir > 0;
 
                 List<Vector3> toConsider = new List<Vector3>() { frontDir, middleDir, backDir };
                 List<Vector3> points = new List<Vector3>() { this.front, this.middle, this.back };
@@ -317,36 +343,42 @@ namespace Idea_1
                     points.RemoveAt(2);
                 }
 
-                int selectedIndex = Vector3.Angle(playerDir, toConsider[0]) < Vector3.Angle(playerDir, toConsider[1]) ? 0 : 1;
+                int selectedIndex = Vector3.Angle(playerArrowDir, toConsider[0]) <
+                                    Vector3.Angle(playerArrowDir, toConsider[1])
+                    ? 0
+                    : 1;
 
                 if (points[selectedIndex] == front)
                 {
                     if (points[Mathf.Abs(selectedIndex - 1)] == this.back)
                         key.facingHigherIndexPoint = !key.facingHigherIndexPoint;
 
-                    key.transform.LookAt(this.calculatedPath[this.index + 1]);
-                    key.transform.LookAt(key.transform.position + key.transform.forward * (key.facingHigherIndexPoint ? 1 : -1));
+                    keyTrans.LookAt(this.calculatedPath[this.index + 1]);
+                    keyTrans.LookAt(keyTrans.position +
+                                    keyTrans.forward * (key.facingHigherIndexPoint ? 1 : -1));
                 }
                 else if (points[selectedIndex] == this.middle)
                 {
                     if (points[Mathf.Abs(selectedIndex - 1)] == this.back)
                         key.facingHigherIndexPoint = !key.facingHigherIndexPoint;
 
-                    key.transform.LookAt(this.splitCalculatedPath[this.splitIndex + 1]);
-                    key.transform.LookAt(key.transform.position + key.transform.forward * (key.facingHigherIndexPoint ? 1 : -1));
+                    keyTrans.LookAt(this.splitCalculatedPath[this.splitIndex + 1]);
+                    keyTrans.LookAt(keyTrans.position +
+                                    keyTrans.forward * (key.facingHigherIndexPoint ? 1 : -1));
                 }
                 else
                 {
-                    key.transform.LookAt(this.calculatedPath[this.index - 1]);
-                    key.transform.LookAt(key.transform.position + key.transform.forward * (key.facingHigherIndexPoint ? -1 : 1));
+                    keyTrans.LookAt(this.calculatedPath[this.index - 1]);
+                    keyTrans.LookAt(keyTrans.position +
+                                    keyTrans.forward * (key.facingHigherIndexPoint ? -1 : 1));
                 }
             }
             else
             {
                 this.disableCrossDirectionUpdate = false;
 
-                int currentIndex = this.onSplitedPath ? this.splitIndex : this.index;
-                Vector3[] list = this.onSplitedPath ? this.splitCalculatedPath : this.calculatedPath;
+                int currentIndex = this.onSplitPath ? this.splitIndex : this.index;
+                Vector3[] list = this.onSplitPath ? this.splitCalculatedPath : this.calculatedPath;
 
                 Vector3 curPoint = list[currentIndex],
                     lowerPoint = list[currentIndex - 1],
@@ -357,25 +389,27 @@ namespace Idea_1
 
                 if (lowDist < highDist)
                 {
-                    key.transform.LookAt(lowerPoint);
-                    key.transform.LookAt(key.transform.position + key.transform.forward * (key.facingHigherIndexPoint ? -1 : 1));
+                    keyTrans.LookAt(lowerPoint);
+                    keyTrans.LookAt(keyTrans.position +
+                                    keyTrans.forward * (key.facingHigherIndexPoint ? -1 : 1));
                 }
                 else
                 {
-                    key.transform.LookAt(higherPoint);
-                    key.transform.LookAt(key.transform.position + key.transform.forward * (key.facingHigherIndexPoint ? 1 : -1));
+                    keyTrans.LookAt(higherPoint);
+                    keyTrans.LookAt(keyTrans.position +
+                                    keyTrans.forward * (key.facingHigherIndexPoint ? 1 : -1));
                 }
 
                 if (lowDist < curDist && lowDist < highDist)
                 {
-                    if (this.onSplitedPath)
+                    if (this.onSplitPath)
                         this.splitIndex--;
                     else
                         this.index--;
                 }
                 else if (highDist < curDist && highDist < lowDist)
                 {
-                    if (this.onSplitedPath)
+                    if (this.onSplitPath)
                         this.splitIndex++;
                     else
                         this.index++;
@@ -385,26 +419,30 @@ namespace Idea_1
 
         private void V2Controls(Key key, float dir)
         {
-            Vector3 keyPos = key.transform.position;
+            Transform keyTrans = key.transform;
+            Vector3 keyPos = keyTrans.position;
 
-            if (this.index == 0 || this.index == this.calculatedPath.Length - 1 || this.splitIndex == this.splitCalculatedPath.Length - 1)
+            if (this.index == 0 || this.index == this.calculatedPath.Length - 1 ||
+                this.splitIndex == this.splitCalculatedPath.Length - 1)
             {
                 Color c;
-                float fDist = Vector3.Distance(keyPos, this.front), mDist = Vector3.Distance(keyPos, this.middle), bDist = Vector3.Distance(keyPos, this.back);
+                float fDist = Vector3.Distance(keyPos, this.front),
+                    mDist = Vector3.Distance(keyPos, this.middle),
+                    bDist = Vector3.Distance(keyPos, this.back);
 
                 if (fDist < mDist && fDist < bDist)
                 {
-                    key.SetCurrentLine(this.frontTransfer, TransferTo.FRONT, dir);
+                    key.SetCurrentLine(this.frontTransfer, TransferTo.Front, dir);
                     c = this.frontTransfer.color;
                 }
                 else if (mDist < bDist)
                 {
-                    key.SetCurrentLine(this.middleTransfer, TransferTo.MIDDLE, dir);
+                    key.SetCurrentLine(this.middleTransfer, TransferTo.Middle, dir);
                     c = this.middleTransfer.color;
                 }
                 else
                 {
-                    key.SetCurrentLine(this.backTransfer, TransferTo.BACK, dir);
+                    key.SetCurrentLine(this.backTransfer, TransferTo.Back, dir);
                     c = this.backTransfer.color;
                 }
 
@@ -416,49 +454,54 @@ namespace Idea_1
                 {
                     if (this.indexDir > 0)
                     {
-                        this.onSplitedPath = Vector3.Angle(this.playerDir, this.splitCalculatedPath[1] - keyPos) < Vector3.Angle(this.playerDir, this.calculatedPath[this.index + 1] - keyPos);
+                        this.onSplitPath = Vector3.Angle(this.playerDir, this.splitCalculatedPath[1] - keyPos) <
+                                           Vector3.Angle(this.playerDir, this.calculatedPath[this.index + 1] - keyPos);
 
-                        if (this.onSplitedPath)
+                        if (this.onSplitPath)
                         {
-                            key.transform.LookAt(this.splitCalculatedPath[1]);
+                            keyTrans.LookAt(this.splitCalculatedPath[1]);
 
-                            if (Vector3.Distance(keyPos, this.splitCalculatedPath[1]) < Vector3.Distance(keyPos, this.splitCalculatedPath[0]))
+                            if (Vector3.Distance(keyPos, this.splitCalculatedPath[1]) <
+                                Vector3.Distance(keyPos, this.splitCalculatedPath[0]))
                                 this.splitIndex++;
                         }
                         else
                         {
-                            key.transform.LookAt(this.calculatedPath[this.index + 1]);
-                            if (Vector3.Distance(keyPos, this.calculatedPath[this.index + 1]) < Vector3.Distance(keyPos, this.calculatedPath[this.index]))
+                            keyTrans.LookAt(this.calculatedPath[this.index + 1]);
+                            if (Vector3.Distance(keyPos, this.calculatedPath[this.index + 1]) <
+                                Vector3.Distance(keyPos, this.calculatedPath[this.index]))
                                 this.index++;
                         }
 
-                        key.transform.position += key.transform.forward * key.speed * Time.deltaTime;
+                        keyTrans.position += keyTrans.forward * (key.speed * Time.deltaTime);
                     }
                     else
                     {
-                        this.onSplitedPath = false;
-                        key.transform.LookAt(this.calculatedPath[this.index - 1]);
-                        key.transform.position += key.transform.forward * key.speed * Time.deltaTime;
+                        this.onSplitPath = false;
+                        keyTrans.LookAt(this.calculatedPath[this.index - 1]);
+                        keyTrans.position += keyTrans.forward * (key.speed * Time.deltaTime);
 
-                        if (Vector3.Distance(keyPos, this.calculatedPath[this.index - 1]) < Vector3.Distance(keyPos, this.calculatedPath[this.index]))
+                        if (Vector3.Distance(keyPos, this.calculatedPath[this.index - 1]) <
+                            Vector3.Distance(keyPos, this.calculatedPath[this.index]))
                             this.index--;
                     }
                 }
                 else
                 {
-                    int selectedIndex = this.onSplitedPath ? this.splitIndex : this.index;
-                    Vector3[] selectedList = this.onSplitedPath ? this.splitCalculatedPath : this.calculatedPath;
+                    int selectedIndex = this.onSplitPath ? this.splitIndex : this.index;
+                    Vector3[] selectedList = this.onSplitPath ? this.splitCalculatedPath : this.calculatedPath;
 
                     if (this.indexDir != 0)
                     {
-                        Vector3 curPoint = selectedList[selectedIndex], nextPoint = selectedList[selectedIndex + this.indexDir];
+                        Vector3 curPoint = selectedList[selectedIndex],
+                            nextPoint = selectedList[selectedIndex + this.indexDir];
 
-                        key.transform.LookAt(selectedList[selectedIndex + this.indexDir]);
-                        key.transform.position += key.transform.forward * key.speed * Time.deltaTime;
+                        keyTrans.LookAt(selectedList[selectedIndex + this.indexDir]);
+                        keyTrans.position += keyTrans.forward * (key.speed * Time.deltaTime);
 
                         if (Vector3.Distance(keyPos, nextPoint) < Vector3.Distance(keyPos, curPoint))
                         {
-                            if (this.onSplitedPath)
+                            if (this.onSplitPath)
                                 this.splitIndex += this.indexDir;
                             else
                                 this.index += this.indexDir;
@@ -478,9 +521,13 @@ namespace Idea_1
 
                         this.playerDir = this.setup.playerArrow.forward;
 
-                        Vector3 lowerPoint = selectedList[selectedIndex - 1], higherPoint = selectedList[selectedIndex + 1];
+                        Vector3 lowerPoint = selectedList[selectedIndex - 1],
+                            higherPoint = selectedList[selectedIndex + 1];
 
-                        this.indexDir = Vector3.Angle(this.playerDir, lowerPoint - keyPos) < Vector3.Angle(this.playerDir, higherPoint - keyPos) ? -1 : 1;
+                        this.indexDir = Vector3.Angle(this.playerDir, lowerPoint - keyPos) <
+                                        Vector3.Angle(this.playerDir, higherPoint - keyPos)
+                            ? -1
+                            : 1;
                     }
                 }
             }

@@ -45,10 +45,10 @@ namespace Sirenix.OdinInspector.Editor.Drawers
             if (Event.current.type == EventType.Layout)
             {
                 this.isBroken = false;
-                var count = this.ValueEntry.ValueCount;
+                int count = this.ValueEntry.ValueCount;
                 for (int i = 0; i < count; i++)
                 {
-                    var component = this.ValueEntry.Values[i];
+                    T component = this.ValueEntry.Values[i];
 
                     if (ComponentIsBroken(component, ref this.realWrapperInstance))
                     {
@@ -80,9 +80,9 @@ namespace Sirenix.OdinInspector.Editor.Drawers
                 return;
             }
 
-            var rect = EditorGUILayout.GetControlRect(label != null);
-            var btnRect = rect.AlignRight(20);
-            var controlRect = rect.SetXMax(btnRect.xMin - 5);
+            Rect rect = EditorGUILayout.GetControlRect(label != null);
+            Rect btnRect = rect.AlignRight(20);
+            Rect controlRect = rect.SetXMax(btnRect.xMin - 5);
 
             object newInstance = null;
 
@@ -113,7 +113,7 @@ namespace Sirenix.OdinInspector.Editor.Drawers
 
             if (GUI.Button(btnRect, " ", EditorStyles.miniButton))
             {
-                var popup = new FixBrokenUnityObjectWrapperPopup(this.ValueEntry);
+                FixBrokenUnityObjectWrapperPopup popup = new FixBrokenUnityObjectWrapperPopup(this.ValueEntry);
                 OdinEditorWindow.InspectObjectInDropDown(popup, 300);
             }
 
@@ -125,16 +125,16 @@ namespace Sirenix.OdinInspector.Editor.Drawers
 
         private static bool ComponentIsBroken(T component, ref T realInstance)
         {
-            var uObj = component;
-            var oObj = (object)uObj;
+            T uObj = component;
+            object oObj = (object)uObj;
 
             if (oObj != null && uObj == null)
             {
-                var instanceId = uObj.GetInstanceID();
+                int instanceId = uObj.GetInstanceID();
                 if (AssetDatabase.Contains(instanceId))
                 {
-                    var path = AssetDatabase.GetAssetPath(instanceId);
-                    var realWrapper = AssetDatabase.LoadAllAssetsAtPath(path).FirstOrDefault(n => n.GetInstanceID() == instanceId) as T;
+                    string path = AssetDatabase.GetAssetPath(instanceId);
+                    T realWrapper = AssetDatabase.LoadAllAssetsAtPath(path).FirstOrDefault(n => n.GetInstanceID() == instanceId) as T;
                     if (realWrapper)
                     {
                         realInstance = realWrapper;
@@ -173,7 +173,7 @@ namespace Sirenix.OdinInspector.Editor.Drawers
             {
                 for (int i = 0; i < this.valueEntry.ValueCount; i++)
                 {
-                    var localI = i;
+                    int localI = i;
                     T fixedComponent = null;
                     if (ComponentIsBroken(this.valueEntry.Values[i], ref fixedComponent) && fixedComponent)
                     {

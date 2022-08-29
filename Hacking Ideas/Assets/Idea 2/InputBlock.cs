@@ -19,11 +19,13 @@ namespace Idea_2
         private bool inserted;
         public Vector2Int id;
         private float speed;
-        
+
         public abstract IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid);
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+
             speed = Random.Range(5, 10);
             speed *= Random.Range(0f, 1f) < .5f ? -1 : 1;
         }

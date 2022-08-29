@@ -15,17 +15,18 @@ namespace Idea_2.Blockers
             PlaceDirection.PlusX => new Vector2Int(1, 0),
             _ => new Vector2Int(0, 1)
         };
-        
+
         protected static Vector3 RightDir(VisualGrid grid) =>
             grid.gridTransforms[1][0].position - grid.gridTransforms[0][0].position;
 
         protected static Vector3 UpDir(VisualGrid grid) =>
             grid.gridTransforms[0][1].position - grid.gridTransforms[0][0].position;
-        
-        public virtual IEnumerator Trigger(GridKey key, float timePerBlock, VisualGrid visualGrid, InputBoard inputBoard)
+
+        public virtual IEnumerator Trigger(GridKey key, float timePerBlock, VisualGrid visualGrid,
+            InputBoard inputBoard)
         {
             key.transform.position = visualGrid.gridTransforms[id.x][id.y].position;
-            
+
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + idDir.x, this.id.y + idDir.y);
 
@@ -39,15 +40,14 @@ namespace Idea_2.Blockers
 
                 yield return null;
             }
-            
+
             key.previousDirection = placeDirection;
-            
+
             inputBoard.Trigger(key, idToMoveTo);
         }
 
         public virtual void Reset()
         {
-            
         }
     }
 }
