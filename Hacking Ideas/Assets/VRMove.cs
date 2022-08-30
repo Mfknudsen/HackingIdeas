@@ -35,7 +35,9 @@ public class VRMove : MonoBehaviour
     {
         Vector3 camPos = camTransform.position;
         dirTransform.position = camPos;
-        dirTransform.LookAt(camPos + camTransform.forward, Vector3.up);
+        Vector3 f = camTransform.forward;
+        Vector3 forward = new Vector3(f.x, 0, f.z);
+        dirTransform.LookAt(camPos + forward, Vector3.up);
 
         transform.RotateAround(camPos, Vector3.up, rotDir.x * rotSpeed * Time.deltaTime);
 

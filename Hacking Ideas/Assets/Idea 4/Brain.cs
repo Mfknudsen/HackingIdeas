@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,22 +16,53 @@ namespace Idea_4
 
         [SerializeField] private Material lineMat;
         [SerializeField] private GameObject indicator;
+        [SerializeField] private TextMeshPro textMeshPro;
+
+        private int knifePartsTouching;
+
+        private void OnDrawGizmos()
+        {
+            Vector3 center = transform.position;
+            foreach (CutLine cutLine in cutLines)
+            {
+                List<Vector3> points = new List<Vector3> { cutLine.startPoint , cutLine.endPoint};
+                points.AddRange(cutLine.between);
+                
+                foreach (Vector3 v in points)
+                {
+                    Gizmos.DrawRay(v, v - center );
+                }
+            }
+        }
 
         private void Update()
         {
+            this.textMeshPro.text = Mathf.FloorToInt((this.maxDamage - this.currentDamage) * 10) / 10f + " / " +
+                                    this.maxDamage;
+
             if (this.currentDamage >= this.maxDamage)
                 Debug.Log("Dead");
+
+            if (this.cutLines.All(c => c.done))
+                textMeshPro.text = "Victory";
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.GetComponentInParent<Knife>() is { } knife)
-                knife.touchingBrain = true;
+            if (!(other.GetComponentInParent<Knife>() is { } knife)) return;
+
+            this.knifePartsTouching++;
+            knife.touchingBrain = true;
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.GetComponentInParent<Knife>() is { } knife)
+            Knife knife = other.GetComponentInParent<Knife>();
+
+            if (knife != null)
+                this.knifePartsTouching--;
+
+            if (this.knifePartsTouching == 0)
                 knife.touchingBrain = false;
         }
 
@@ -140,17 +174,12 @@ namespace Idea_4
     public class CutLine
     {
         public readonly Vector3 startPoint, endPoint;
-
         public readonly Vector3[] between;
-
         public readonly GameObject indicator;
-
         public LineRenderer lineRenderer;
-
         public bool done;
 
         private int currentIndex, nextIndex;
-
         private List<Vector3> points = new List<Vector3>();
 
         public CutLine(Vector3 startPoint, Vector3 endPoint, Vector3[] between, GameObject indicator)
@@ -195,8 +224,8 @@ namespace Idea_4
 
         public void Update(Knife knife)
         {
-            Vector3 knifePos = knife.cutPoint.position; 
-            
+            Vector3 knifePos = knife.cutPoint.position;
+
             if (this.done)
             {
                 if (Vector3.Distance(knifePos, this.endPoint) > knife.setup.brain.maxDistanceFromLine)
@@ -211,28 +240,32 @@ namespace Idea_4
                 knife.setup.brain.maxDistanceFromLine)
                 knife.setup.brain.currentDamage += knife.setup.damagePerSecond * Time.deltaTime;
 
-            if (Vector3.Distance(knifePos, this.points[this.nextIndex]) > .05f) return;
+            if (Vector3.Distance(knifePos, this.points[this.nextIndex]) > .02f) return;
 
-            this.points.RemoveAt(0);
+            if (this.points.Count > 0)
+                this.points.RemoveAt(0);
 
             this.currentIndex++;
             this.nextIndex++;
 
+            if (this.nextIndex >= this.points.Count)
+            {
+                this.lineRenderer.positionCount = 0;
+                this.done = true;
+                return;
+            }
+
             this.lineRenderer.positionCount = this.points.Count;
             for (int i = 0; i < this.points.Count; i++)
                 this.lineRenderer.SetPosition(i, this.points[i]);
-
-            if (this.currentIndex == this.points.Count)
-                this.done = true;
         }
 
         private static float DistanceToLineFromPoint(Vector3 point, Vector3 lineStart, Vector3 lineEnd)
         {
-            Vector3 d = (lineEnd - lineStart) / Vector3.Distance(lineEnd, lineStart);
-            Vector3 v = point - lineStart;
-            float dot = Vector3.Distance(v, d);
-            Vector3 p = lineStart + dot * d;
-            return Vector3.Distance(p, point);
+            float s1 = -lineEnd.y + lineStart.y;
+            float s2 = lineEnd.x - lineStart.x;
+            return Mathf.Abs((point.x - lineStart.x) * s1 + (point.y - lineStart.y) * s2) /
+                   Mathf.Sqrt(s1 * s1 + s2 * s2);
         }
     }
 }

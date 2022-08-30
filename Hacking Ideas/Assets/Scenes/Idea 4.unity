@@ -432,7 +432,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   knife: {fileID: 1732281403}
   brain: {fileID: 1166821878}
-  lineCount: 6
+  lineCount: 2
   damagePerSecond: 1
 --- !u!4 &1168239769
 Transform:
@@ -553,22 +553,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Brain
-      objectReference: {fileID: 0}
-    - target: {fileID: 3292650477853360918, guid: 434decd494da39c4a9100f5e03f65689,
-        type: 3}
-      propertyPath: lineMat
-      value: 
-      objectReference: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
-    - target: {fileID: 3292650477853360918, guid: 434decd494da39c4a9100f5e03f65689,
-        type: 3}
-      propertyPath: indicator
-      value: 
-      objectReference: {fileID: 7925015339751186234, guid: 1be8986ae0def204cbc66f88f24f5060,
-        type: 3}
-    - target: {fileID: 3292650477853360918, guid: 434decd494da39c4a9100f5e03f65689,
-        type: 3}
-      propertyPath: maxDistanceFromLine
-      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 3292650477853360919, guid: 434decd494da39c4a9100f5e03f65689,
         type: 3}
@@ -701,3 +685,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06ca3ebe131456d4499a3e14af10ba9d, type: 3}
+--- !u!1 &3837128891402180656 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3837128891646612533, guid: 06ca3ebe131456d4499a3e14af10ba9d,
+    type: 3}
+  m_PrefabInstance: {fileID: 3837128891402180655}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &3837128891402180657
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3837128891402180656}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0000013, y: 1.0000004, z: 1.0000004}
+  m_Center: {x: 0.000061035156, y: 0, z: -0.000030517578}

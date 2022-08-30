@@ -13,17 +13,17 @@ namespace Idea_4
 
         private void Update()
         {
-            if (!touchingBrain && currentLine != null)
+            if (!this.touchingBrain && this.currentLine != null)
             {
-                currentLine.Deselect();
-                currentLine = null;
+                this.currentLine.Deselect();
+                this.currentLine = null;
             }
 
-            if (!active || !touchingBrain) return;
+            if (!this.active || !this.touchingBrain) return;
 
-            if (currentLine == null)
+            if (this.currentLine == null)
             {
-                Vector3 point = transform.position;
+                Vector3 point = cutPoint.position;
                 float dist = 10;
                 foreach (CutLine c in this.setup.brain.cutLines)
                 {
@@ -31,16 +31,17 @@ namespace Idea_4
 
                     float d = Vector3.Distance(point, c.startPoint);
 
-                    if (d > this.setup.brain.maxDistanceFromLine && dist < d) continue;
-
-                    dist = d;
-                    currentLine = c;
+                    if (d < this.setup.brain.maxDistanceFromLine && d < dist)
+                    {
+                        dist = d;
+                        this.currentLine = c;
+                    }
                 }
 
-                currentLine?.Selected();
+                this.currentLine?.Selected();
             }
             else
-                currentLine.Update(this);
+                this.currentLine.Update(this);
         }
 
         protected override void OnGrab()

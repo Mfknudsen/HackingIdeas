@@ -38,12 +38,12 @@ public class VRGrab : MonoBehaviour
                 : this.playerInput.Player.GrabLeft)
             .ReadValue<float>();
 
-        if (grib > this.threshold && !this.grabbing)
+        if (grib > this.threshold + .05f && !this.grabbing)
         {
             this.grabbing = true;
             Grab();
         }
-        else if (grib < this.threshold && this.grabbing)
+        else if (grib < this.threshold - .05f && this.grabbing)
         {
             this.grabbing = false;
             Release();
