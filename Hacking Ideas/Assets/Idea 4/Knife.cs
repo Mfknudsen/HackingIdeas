@@ -13,6 +13,10 @@ namespace Idea_4
 
         private void Update()
         {
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
+            if (this.touchingBrain && this.currentLine == null)
+                this.setup.brain.currentDamage += this.setup.damagePerSecond * Time.deltaTime;
+
             if (!this.touchingBrain && this.currentLine != null)
             {
                 this.currentLine.Deselect();
@@ -31,11 +35,10 @@ namespace Idea_4
 
                     float d = Vector3.Distance(point, c.startPoint);
 
-                    if (d < this.setup.brain.maxDistanceFromLine && d < dist)
-                    {
-                        dist = d;
-                        this.currentLine = c;
-                    }
+                    if (!(d < this.setup.brain.maxDistanceFromLine) || !(d < dist)) continue;
+                    
+                    dist = d;
+                    this.currentLine = c;
                 }
 
                 this.currentLine?.Selected();

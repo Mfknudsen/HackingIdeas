@@ -3,7 +3,6 @@ using UnityEngine;
 public abstract class VrGrabObject : MonoBehaviour
 {
     protected Transform originParent;
-
     protected bool grabbed;
 
     protected virtual void Start()

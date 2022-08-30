@@ -432,7 +432,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   knife: {fileID: 1732281403}
   brain: {fileID: 1166821878}
-  lineCount: 2
+  lineCount: 5
   damagePerSecond: 1
 --- !u!4 &1168239769
 Transform:
@@ -549,6 +549,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1168239769}
     m_Modifications:
+    - target: {fileID: 613804063, guid: 434decd494da39c4a9100f5e03f65689, type: 3}
+      propertyPath: m_text
+      value: Health
+      objectReference: {fileID: 0}
     - target: {fileID: 3292650477853360912, guid: 434decd494da39c4a9100f5e03f65689,
         type: 3}
       propertyPath: m_Name
@@ -567,7 +571,7 @@ PrefabInstance:
     - target: {fileID: 3292650477853360919, guid: 434decd494da39c4a9100f5e03f65689,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.626
+      value: -1.232
       objectReference: {fileID: 0}
     - target: {fileID: 3292650477853360919, guid: 434decd494da39c4a9100f5e03f65689,
         type: 3}
@@ -631,12 +635,12 @@ PrefabInstance:
     - target: {fileID: 3837128893181713942, guid: 06ca3ebe131456d4499a3e14af10ba9d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.096
+      value: -0.217
       objectReference: {fileID: 0}
     - target: {fileID: 3837128893181713942, guid: 06ca3ebe131456d4499a3e14af10ba9d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.469
+      value: -1.157
       objectReference: {fileID: 0}
     - target: {fileID: 3837128893181713942, guid: 06ca3ebe131456d4499a3e14af10ba9d,
         type: 3}

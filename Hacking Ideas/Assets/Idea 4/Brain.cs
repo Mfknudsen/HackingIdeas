@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -19,26 +18,25 @@ namespace Idea_4
         [SerializeField] private TextMeshPro textMeshPro;
 
         private int knifePartsTouching;
+        private Camera cam;
 
-        private void OnDrawGizmos()
+        private void Start()
         {
-            Vector3 center = transform.position;
-            foreach (CutLine cutLine in cutLines)
-            {
-                List<Vector3> points = new List<Vector3> { cutLine.startPoint , cutLine.endPoint};
-                points.AddRange(cutLine.between);
-                
-                foreach (Vector3 v in points)
-                {
-                    Gizmos.DrawRay(v, v - center );
-                }
-            }
+            cam = Camera.main;
         }
 
         private void Update()
         {
-            this.textMeshPro.text = Mathf.FloorToInt((this.maxDamage - this.currentDamage) * 10) / 10f + " / " +
-                                    this.maxDamage;
+            if (cam != null)
+            {
+                Vector3 position = this.textMeshPro.transform.position;
+                Vector3 dir = cam.transform.position - position;
+                dir = new Vector3(dir.x, 0, dir.z);
+                this.textMeshPro.transform.LookAt(position - dir, Vector3.up);
+            }
+
+            this.textMeshPro.text = Mathf.FloorToInt((this.maxDamage - this.currentDamage) * 10) / 10f +
+                                    " / " + this.maxDamage;
 
             if (this.currentDamage >= this.maxDamage)
                 Debug.Log("Dead");
@@ -88,7 +86,7 @@ namespace Idea_4
                                 1f / count * j),
                             center));
 
-                cutLines.Add(new CutLine(startPoint, endPoint, between.ToArray(), Instantiate(indicator)));
+                cutLines.Add(new CutLine(startPoint, endPoint, between.ToArray(), Instantiate(indicator), this));
             }
 
             foreach (SphereCollider s in GetComponents<SphereCollider>())
@@ -138,8 +136,8 @@ namespace Idea_4
         {
             Vector3 checkPoint = center + new Vector3(
                 Random.Range(-1f, 1f),
-                Random.Range(0f, 1f),
-                Random.Range(0f, 1f)) * 2;
+                Random.Range(-1f, 1f),
+                Random.Range(-1f, 1f)) * 2;
 
             Vector3 dir = center - checkPoint;
 
@@ -179,15 +177,17 @@ namespace Idea_4
         public LineRenderer lineRenderer;
         public bool done;
 
+        private readonly Brain brain;
         private int currentIndex, nextIndex;
         private List<Vector3> points = new List<Vector3>();
 
-        public CutLine(Vector3 startPoint, Vector3 endPoint, Vector3[] between, GameObject indicator)
+        public CutLine(Vector3 startPoint, Vector3 endPoint, Vector3[] between, GameObject indicator, Brain brain)
         {
             this.startPoint = startPoint;
             this.endPoint = endPoint;
             this.between = between;
             this.indicator = indicator;
+            this.brain = brain;
 
             this.indicator.transform.position = this.startPoint;
         }
@@ -202,15 +202,11 @@ namespace Idea_4
             this.nextIndex = 1;
 
             this.done = false;
-
-            this.indicator.SetActive(false);
         }
 
         public void Deselect()
         {
             if (this.done) return;
-
-            this.indicator.SetActive(true);
 
             this.points = new List<Vector3> { this.startPoint };
             this.points.AddRange(this.between);
@@ -220,6 +216,9 @@ namespace Idea_4
 
             for (int i = 0; i < this.points.Count; i++)
                 this.lineRenderer.SetPosition(i, this.points[i]);
+
+            this.indicator.transform.position = this.startPoint;
+            this.indicator.transform.LookAt(this.startPoint + (this.brain.transform.position - this.startPoint));
         }
 
         public void Update(Knife knife)
@@ -240,20 +239,24 @@ namespace Idea_4
                 knife.setup.brain.maxDistanceFromLine)
                 knife.setup.brain.currentDamage += knife.setup.damagePerSecond * Time.deltaTime;
 
-            if (Vector3.Distance(knifePos, this.points[this.nextIndex]) > .02f) return;
+            if (Vector3.Distance(knifePos, this.points[this.currentIndex]) > .02f) return;
 
-            if (this.points.Count > 0)
-                this.points.RemoveAt(0);
+            this.points.RemoveAt(0);
 
             this.currentIndex++;
             this.nextIndex++;
 
             if (this.nextIndex >= this.points.Count)
             {
+                this.indicator.SetActive(false);
                 this.lineRenderer.positionCount = 0;
                 this.done = true;
                 return;
             }
+
+            this.indicator.transform.position = this.points[this.currentIndex];
+            this.indicator.transform.LookAt(this.points[this.currentIndex] +
+                                            (this.brain.transform.position - this.points[this.currentIndex]));
 
             this.lineRenderer.positionCount = this.points.Count;
             for (int i = 0; i < this.points.Count; i++)
