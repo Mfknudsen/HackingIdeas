@@ -12,13 +12,13 @@ public abstract class VrGrabObject : MonoBehaviour
 
     public void Grab(Transform newParent)
     {
-        if (this.grabbed) return;
+        if (this.grabbed && newParent == transform.parent) return;
 
         transform.parent = newParent;
 
-        OnGrab();
-
         this.grabbed = true;
+
+        OnGrab();
     }
 
     public void Release()
@@ -27,9 +27,9 @@ public abstract class VrGrabObject : MonoBehaviour
 
         transform.parent = this.originParent;
 
-        OnRelease();
-
         this.grabbed = false;
+        
+        OnRelease();
     }
 
     protected abstract void OnGrab();

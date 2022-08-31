@@ -36,15 +36,16 @@ namespace Idea_4
                     float d = Vector3.Distance(point, c.startPoint);
 
                     if (!(d < this.setup.brain.maxDistanceFromLine) || !(d < dist)) continue;
-                    
+
                     dist = d;
                     this.currentLine = c;
                 }
 
-                this.currentLine?.Selected();
+                if (this.currentLine != null)
+                    this.currentLine.Selected();
             }
             else
-                this.currentLine.Update(this);
+                this.currentLine.UpdateCut(this);
         }
 
         protected override void OnGrab()

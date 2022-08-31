@@ -14,7 +14,7 @@ public class VRGrab : MonoBehaviour
 
     private VrGrabObject holdingObj;
     private readonly List<GameObject> objectsInRange = new List<GameObject>();
-
+    
     #endregion
 
     #region MonoBehaviour
@@ -38,7 +38,9 @@ public class VRGrab : MonoBehaviour
                 : this.playerInput.Player.GrabLeft)
             .ReadValue<float>();
 
-        if (grib > this.threshold&& !this.grabbing)
+        grib = Mathf.Floor(grib * 10);
+        
+        if (grib > this.threshold && !this.grabbing)
         {
             this.grabbing = true;
             Grab();
@@ -79,8 +81,7 @@ public class VRGrab : MonoBehaviour
 
         if (this.holdingObj == null) return;
 
-        if (this.holdingObj.GetComponentInParent<VRGrab>() is { } g && g != this)
-            g.holdingObj = null;
+        if (this.holdingObj.GetComponentInParent<VRGrab>() is { } g && g != this) g.holdingObj = null;
 
         this.holdingObj.Grab(transform);
     }

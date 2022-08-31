@@ -6,8 +6,9 @@ using Random = UnityEngine.Random;
 
 namespace Idea_4
 {
-    public class Brain : MonoBehaviour
+    public class Brain : VrGrabObject
     {
+        public BrainSurgeryHackSetup setup;
         public readonly List<CutLine> cutLines = new List<CutLine>();
         public float maxDistanceFromLine = .1f;
 
@@ -20,7 +21,10 @@ namespace Idea_4
         private int knifePartsTouching;
         private Camera cam;
 
-        private void Start()
+        private Transform grabbedBy;
+        private Vector3 prePosition;
+
+        protected override void Start()
         {
             cam = Camera.main;
         }
@@ -34,16 +38,49 @@ namespace Idea_4
                 dir = new Vector3(dir.x, 0, dir.z);
                 this.textMeshPro.transform.LookAt(position - dir, Vector3.up);
             }
+            else
+                cam = Camera.main;
 
             this.textMeshPro.text = Mathf.FloorToInt((this.maxDamage - this.currentDamage) * 10) / 10f +
                                     " / " + this.maxDamage;
 
-            if (this.currentDamage >= this.maxDamage)
-                Debug.Log("Dead");
-
             if (this.cutLines.All(c => c.done))
                 textMeshPro.text = "Victory";
+            else if (this.currentDamage >= this.maxDamage)
+                Debug.Log("Dead");
+
+            if (this.grabbedBy == null || cam == null) return;
+            {
+                if (this.grabbedBy.position == this.prePosition) return;
+
+                Vector3 center = transform.position;
+                Vector3 curPos = this.grabbedBy.position;
+
+                Vector2 camPos = cam.WorldToScreenPoint(curPos),
+                    preCamPos = cam.WorldToScreenPoint(prePosition);
+
+                Vector2 dir = camPos - preCamPos;
+
+                transform.RotateAround(center, cam.transform.up, -dir.x * .3f);
+                transform.RotateAround(center, cam.transform.right, dir.y * .3f);
+
+                this.prePosition = curPos;
+            }
         }
+
+        protected override void OnGrab()
+        {
+            Transform t = transform;
+            this.grabbedBy = t.parent;
+            this.prePosition = this.grabbedBy.position;
+            t.parent = this.setup.transform;
+        }
+
+        protected override void OnRelease()
+        {
+            this.grabbedBy = null;
+        }
+
 
         private void OnTriggerEnter(Collider other)
         {
@@ -57,8 +94,9 @@ namespace Idea_4
         {
             Knife knife = other.GetComponentInParent<Knife>();
 
-            if (knife != null)
-                this.knifePartsTouching--;
+            if (knife == null) return;
+
+            this.knifePartsTouching--;
 
             if (this.knifePartsTouching == 0)
                 knife.touchingBrain = false;
@@ -86,28 +124,18 @@ namespace Idea_4
                                 1f / count * j),
                             center));
 
-                cutLines.Add(new CutLine(startPoint, endPoint, between.ToArray(), Instantiate(indicator), this));
-            }
-
-            foreach (SphereCollider s in GetComponents<SphereCollider>())
-            {
-                if (!s.isTrigger)
-                    Destroy(s);
+                cutLines.Add(new GameObject("Cutline").AddComponent<CutLine>().Setup(startPoint, endPoint,
+                    between.ToArray(),
+                    Instantiate(indicator), this));
             }
 
             foreach (CutLine cutLine in cutLines)
             {
-                GameObject obj = new GameObject("Cut Line")
-                {
-                    transform =
-                    {
-                        parent = t.parent,
-                        position = t.position
-                    }
-                };
+                GameObject obj = cutLine.gameObject;
+                obj.transform.parent = t;
+                obj.transform.position = center;
 
-                Vector3 position = obj.transform.position;
-                obj.transform.LookAt(position + (cutLine.startPoint - center) + (cutLine.endPoint - center));
+                obj.transform.LookAt(center + (cutLine.startPoint - center) + (cutLine.endPoint - center));
 
                 LineRenderer lineRenderer = obj.AddComponent<LineRenderer>();
                 cutLine.lineRenderer = lineRenderer;
@@ -124,9 +152,26 @@ namespace Idea_4
                 positions.AddRange(cutLine.between);
                 positions.Add(cutLine.endPoint);
 
-                for (int i = 0; i < positions.Count; i++)
-                    lineRenderer.SetPosition(i, positions[i] + (positions[i] - center).normalized * .001f);
+                List<Transform> transforms = new List<Transform>();
 
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    GameObject o = new GameObject("T")
+                    {
+                        transform =
+                        {
+                            parent = cutLine.transform,
+                            position = positions[i]
+                        }
+                    };
+
+                    transforms.Add(o.transform);
+
+                    lineRenderer.SetPosition(i, positions[i] + (positions[i] - center).normalized * .002f);
+                }
+
+                cutLine.pointTransforms = transforms;
+                cutLine.points = positions;
                 cutLine.indicator.transform.position = cutLine.startPoint;
                 cutLine.indicator.transform.LookAt(cutLine.startPoint + (center - cutLine.startPoint));
             }
@@ -166,109 +211,6 @@ namespace Idea_4
             }
 
             return Vector3.zero;
-        }
-    }
-
-    public class CutLine
-    {
-        public readonly Vector3 startPoint, endPoint;
-        public readonly Vector3[] between;
-        public readonly GameObject indicator;
-        public LineRenderer lineRenderer;
-        public bool done;
-
-        private readonly Brain brain;
-        private int currentIndex, nextIndex;
-        private List<Vector3> points = new List<Vector3>();
-
-        public CutLine(Vector3 startPoint, Vector3 endPoint, Vector3[] between, GameObject indicator, Brain brain)
-        {
-            this.startPoint = startPoint;
-            this.endPoint = endPoint;
-            this.between = between;
-            this.indicator = indicator;
-            this.brain = brain;
-
-            this.indicator.transform.position = this.startPoint;
-        }
-
-        public void Selected()
-        {
-            this.points = new List<Vector3> { this.startPoint };
-            this.points.AddRange(this.between);
-            this.points.Add(this.endPoint);
-
-            this.currentIndex = 0;
-            this.nextIndex = 1;
-
-            this.done = false;
-        }
-
-        public void Deselect()
-        {
-            if (this.done) return;
-
-            this.points = new List<Vector3> { this.startPoint };
-            this.points.AddRange(this.between);
-            this.points.Add(this.endPoint);
-
-            this.lineRenderer.positionCount = this.points.Count;
-
-            for (int i = 0; i < this.points.Count; i++)
-                this.lineRenderer.SetPosition(i, this.points[i]);
-
-            this.indicator.transform.position = this.startPoint;
-            this.indicator.transform.LookAt(this.startPoint + (this.brain.transform.position - this.startPoint));
-        }
-
-        public void Update(Knife knife)
-        {
-            Vector3 knifePos = knife.cutPoint.position;
-
-            if (this.done)
-            {
-                if (Vector3.Distance(knifePos, this.endPoint) > knife.setup.brain.maxDistanceFromLine)
-                    knife.setup.brain.currentDamage += knife.setup.damagePerSecond * Time.deltaTime;
-
-                return;
-            }
-
-            if (DistanceToLineFromPoint(knifePos,
-                    this.points[this.currentIndex],
-                    this.points[this.nextIndex]) >
-                knife.setup.brain.maxDistanceFromLine)
-                knife.setup.brain.currentDamage += knife.setup.damagePerSecond * Time.deltaTime;
-
-            if (Vector3.Distance(knifePos, this.points[this.currentIndex]) > .02f) return;
-
-            this.points.RemoveAt(0);
-
-            this.currentIndex++;
-            this.nextIndex++;
-
-            if (this.nextIndex >= this.points.Count)
-            {
-                this.indicator.SetActive(false);
-                this.lineRenderer.positionCount = 0;
-                this.done = true;
-                return;
-            }
-
-            this.indicator.transform.position = this.points[this.currentIndex];
-            this.indicator.transform.LookAt(this.points[this.currentIndex] +
-                                            (this.brain.transform.position - this.points[this.currentIndex]));
-
-            this.lineRenderer.positionCount = this.points.Count;
-            for (int i = 0; i < this.points.Count; i++)
-                this.lineRenderer.SetPosition(i, this.points[i]);
-        }
-
-        private static float DistanceToLineFromPoint(Vector3 point, Vector3 lineStart, Vector3 lineEnd)
-        {
-            float s1 = -lineEnd.y + lineStart.y;
-            float s2 = lineEnd.x - lineStart.x;
-            return Mathf.Abs((point.x - lineStart.x) * s1 + (point.y - lineStart.y) * s2) /
-                   Mathf.Sqrt(s1 * s1 + s2 * s2);
         }
     }
 }
