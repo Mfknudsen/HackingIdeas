@@ -13,10 +13,10 @@ namespace Idea_2
                 Mathf.Clamp(id.y, -1, size.y)
             );
 
-            Vector3 right = visualGrid.gridTransforms[1][0].position - visualGrid.gridTransforms[0][0].position,
-                up = visualGrid.gridTransforms[0][1].position - visualGrid.gridTransforms[0][0].position;
+            Vector3 right = this.inputBoard.gridTransforms[1][0].position - this.inputBoard.gridTransforms[0][0].position,
+                up = this.inputBoard.gridTransforms[0][1].position - this.inputBoard.gridTransforms[0][0].position;
 
-            transform.position = visualGrid.gridTransforms[0][0].position + right * id.x + up * id.y;
+            transform.position = this.inputBoard.gridTransforms[0][0].position + right * id.x + up * id.y;
         }
     }
 }

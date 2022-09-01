@@ -5,14 +5,14 @@ namespace Idea_2.InputBlocks
 {
     public class SimpleDirectionalBlock : InputBlock
     {
-        public override IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid)
+        public override IEnumerator TriggerInput(GridKey key, float timePerBlock)
         {
-            key.transform.position = visualGrid.gridTransforms[id.x][id.y].position;
+            key.transform.position = this.inputBoard.gridTransforms[id.x][id.y].position;
          
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + this.idDir.x, this.id.y + this.idDir.y);
 
-            Vector3 dir = UpDir(visualGrid) * this.idDir.y + RightDir(visualGrid) * this.idDir.x;
+            Vector3 dir = UpDir() * this.idDir.y + RightDir() * this.idDir.x;
 
             while (t < timePerBlock)
             {

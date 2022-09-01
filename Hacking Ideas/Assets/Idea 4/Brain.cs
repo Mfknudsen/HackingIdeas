@@ -45,9 +45,9 @@ namespace Idea_4
                                     " / " + this.maxDamage;
 
             if (this.cutLines.All(c => c.done))
-                textMeshPro.text = "Victory";
+                textMeshPro.text = "Victory!";
             else if (this.currentDamage >= this.maxDamage)
-                Debug.Log("Dead");
+                textMeshPro.text = "Dead!";
 
             if (this.grabbedBy == null || cam == null) return;
             {
@@ -179,10 +179,10 @@ namespace Idea_4
 
         private Vector3 RandomPointOnBrain(Vector3 center)
         {
-            Vector3 checkPoint = center + new Vector3(
+            Vector3 checkPoint = center + 5 * new Vector3(
                 Random.Range(-1f, 1f),
                 Random.Range(-1f, 1f),
-                Random.Range(-1f, 1f)) * 2;
+                Random.Range(-1f, 1f));
 
             Vector3 dir = center - checkPoint;
 

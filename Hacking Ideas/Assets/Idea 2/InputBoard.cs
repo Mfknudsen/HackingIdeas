@@ -9,7 +9,6 @@ namespace Idea_2
     public enum BlockerType
     {
         None,
-        Total,
         Up,
         Down,
         Right,
@@ -34,6 +33,8 @@ namespace Idea_2
         [SerializeField, HideInInspector] private List<Storage<InputBlock>> gridBlocks;
         [SerializeField, HideInInspector] public List<Storage<Transform>> gridTransforms;
         [SerializeField, HideInInspector] public List<Storage<BlockerType>> blockerTypes;
+
+        [SerializeField] private GameObject explosionParticle;
 
         private int keysInGoal;
 
@@ -118,7 +119,9 @@ namespace Idea_2
                 if (this.keysInGoal != this.setup.keyStartPositions.Count) return;
 
                 key.gameObject.SetActive(true);
-                key.transform.position = transform.parent.GetComponentInChildren<Button>().transform.position;
+                Transform keyT;
+                (keyT = key.transform).position = transform.parent.GetComponentInChildren<Button>().transform.position;
+                keyT.localScale = Vector3.one * .25f;
 
                 return;
             }
@@ -127,14 +130,7 @@ namespace Idea_2
                 id.x >= this.gridSize.x || id.y >= this.gridSize.y ||
                 (this.gridBlocks[id.x][id.y] == null && this.blockerTypes[id.x][id.y] == BlockerType.None))
             {
-                Reset();
-
-                return;
-            }
-
-            if (this.blockerTypes[id.x][id.y] == BlockerType.Total)
-            {
-                Reset();
+                Reset(key);
 
                 return;
             }
@@ -145,7 +141,6 @@ namespace Idea_2
                     .Trigger(
                         key,
                         this.setup.timePerBlock,
-                        this.setup.visualGrid,
                         this));
 
                 return;
@@ -154,8 +149,7 @@ namespace Idea_2
             key.currentCoroutine = StartCoroutine(
                 this.gridBlocks[id.x][id.y].TriggerInput(
                     key,
-                    this.setup.timePerBlock,
-                    this.setup.visualGrid));
+                    this.setup.timePerBlock));
         }
 
         public bool TryPlaceBlock(InputBlock block)
@@ -190,7 +184,7 @@ namespace Idea_2
                     closestID = new Vector2Int(x, y);
                 }
             }
-            
+
             if (closestID == -Vector2Int.one)
                 return false;
 
@@ -243,15 +237,31 @@ namespace Idea_2
             return true;
         }
 
-        private void Reset()
+        // ReSharper disable once Unity.IncorrectMethodSignature
+        // ReSharper disable once SuggestBaseTypeForParameter
+        public void Reset(GridKey key)
         {
             foreach (GridKey g in transform.parent.GetComponentsInChildren<GridKey>())
             {
                 if (g is EndGoal)
                     continue;
 
-                if (g.currentCoroutine != null)
-                    StopCoroutine(g.currentCoroutine);
+                try
+                {
+                    if (g.currentCoroutine != null)
+                        StopCoroutine(g.currentCoroutine);
+                }
+                catch
+                {
+                    //Harmless error can occur when stopping coroutine.
+                    //TryCatch to stop error message
+                }
+
+                GameObject o = Instantiate(explosionParticle);
+                o.transform.position = g.transform.position;
+                ParticleSystem.MainModule main = o.GetComponent<ParticleSystem>().main;
+                main.startColor = g == key ? Color.black : Color.white;
+
                 g.Reset();
             }
 

@@ -5,14 +5,27 @@ namespace Idea_2.Blockers
 {
     public class DirectionalBlocker : Blocker
     {
-        public override IEnumerator Trigger(GridKey key, float timePerBlock, VisualGrid visualGrid,
+        public override IEnumerator Trigger(GridKey key, float timePerBlock,
             InputBoard inputBoard)
         {
-            key.transform.position = visualGrid.gridTransforms[id.x][id.y].position;
-            
-            if (key.previousDirection == placeDirection)
+            key.transform.position = this.inputBoard.gridTransforms[this.id.x][this.id.y].position;
+
+            int keyLength = key.previousDirection.ToString().Length,
+                placeLength = this.placeDirection.ToString().Length;
+
+            string cKeyDirCoord = key.previousDirection.ToString().Substring(
+                    keyLength - 1, 1),
+                cDirCoord = this.placeDirection.ToString().Substring(
+                    placeLength - 1, 1);
+
+            string cKeyDir = key.previousDirection.ToString().Substring(0, 
+                    keyLength - 1),
+                cDir = this.placeDirection.ToString().Substring(0, 
+                    placeLength - 1);
+
+            if (cKeyDirCoord == cDirCoord && cKeyDir != cDir)
             {
-                key.Reset();
+                this.inputBoard.Reset(key);
                 yield break;
             }
 
@@ -26,7 +39,7 @@ namespace Idea_2.Blockers
 
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + keyDir.x, this.id.y + keyDir.y);
-            Vector3 dir = UpDir(visualGrid) * keyDir.y + RightDir(visualGrid) * keyDir.x;
+            Vector3 dir = UpDir() * keyDir.y + RightDir() * keyDir.x;
 
 
             while (t < timePerBlock)

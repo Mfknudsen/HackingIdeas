@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 namespace Idea_2
@@ -19,8 +20,9 @@ namespace Idea_2
         private bool inserted;
         public Vector2Int id;
         private float speed;
+        private static readonly int ColorID = Shader.PropertyToID("_Color");
 
-        public abstract IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid);
+        public abstract IEnumerator TriggerInput(GridKey key, float timePerBlock);
 
         protected override void Start()
         {
@@ -32,7 +34,35 @@ namespace Idea_2
 
         private void Update()
         {
-            if (!this.inserted)
+            if (this.grabbed)
+            {
+                Transform t = null;
+                Vector3 pos = transform.position;
+                float dist = 10;
+                for (int x = 0; x < this.inputBoard.gridTransforms.Count; x++)
+                {
+                    for (int y = 0; y < this.inputBoard.gridTransforms[0].Count; y++)
+                    {
+                        if (this.inputBoard.blockerTypes[x][y] != BlockerType.None) continue;
+
+                        float d = Vector3.Distance(pos, this.inputBoard.gridTransforms[x][y].position);
+
+                        if (d >= dist || d > .125f) continue;
+
+                        dist = d;
+                        t = this.inputBoard.gridTransforms[x][y];
+                    }
+                }
+
+                foreach (Renderer r in GetComponentsInChildren<Renderer>()
+                             .Where(r => r.material.name.Contains("Arrow")))
+                {
+                    r.material.EnableKeyword("_Color");
+                    r.material.SetColor(ColorID, t != null ? Color.green : Color.white);
+                }
+            }
+
+            if (!this.inserted && !this.grabbed)
                 transform.Rotate(transform.up, speed * Time.deltaTime);
         }
 
@@ -47,6 +77,14 @@ namespace Idea_2
         protected override void OnRelease()
         {
             this.inserted = this.inputBoard.TryPlaceBlock(this);
+
+
+            foreach (Renderer r in GetComponentsInChildren<Renderer>()
+                         .Where(r => r.material.name.Contains("Arrow")))
+            {
+                r.material.EnableKeyword("_Color");
+                r.material.SetColor(ColorID, Color.white);
+            }
 
             if (!this.inserted)
                 Destroy(gameObject);
@@ -64,10 +102,10 @@ namespace Idea_2
             _ => new Vector2Int(0, 1)
         };
 
-        protected static Vector3 RightDir(VisualGrid grid) =>
-            grid.gridTransforms[1][0].position - grid.gridTransforms[0][0].position;
+        protected Vector3 RightDir() =>
+            this.inputBoard.gridTransforms[1][0].position - inputBoard.gridTransforms[0][0].position;
 
-        protected static Vector3 UpDir(VisualGrid grid) =>
-            grid.gridTransforms[0][1].position - grid.gridTransforms[0][0].position;
+        protected Vector3 UpDir() =>
+            this.inputBoard.gridTransforms[0][1].position - this.inputBoard.gridTransforms[0][0].position;
     }
 }

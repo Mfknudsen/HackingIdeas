@@ -11,14 +11,12 @@ namespace Idea_2.Editor
     {
         private GridHackSetup setup;
 
-        private GameObject totalBlocker, dirBlocker, deniedBlocker, switchBlocker;
+        private GameObject dirBlocker, deniedBlocker, switchBlocker;
 
         private void OnEnable()
         {
             this.setup = target as GridHackSetup;
 
-            this.totalBlocker ??=
-                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Idea 2/Blockers/Blocker.prefab");
             this.dirBlocker ??=
                 AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Idea 2/Blockers/DirectionalBlocker.prefab");
             this.deniedBlocker ??=
@@ -31,11 +29,11 @@ namespace Idea_2.Editor
         {
             if (GUILayout.Button("Setup new grid"))
                 this.setup.Setup();
-            
+
             Vector2Int size = this.setup.currentSize;
 
             EditorGUILayout.Separator();
-            
+
             BlockerPositionAndTypes(size);
 
             EditorGUILayout.Separator();
@@ -89,7 +87,7 @@ namespace Idea_2.Editor
 
             EditorGUILayout.Space(ySize * size.y);
         }
-        
+
         private void KeyStartPositions(Vector2Int size)
         {
             EditorGUILayout.LabelField("Key Start Positions:");
@@ -229,12 +227,6 @@ namespace Idea_2.Editor
             // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
             switch (type)
             {
-                case BlockerType.Total:
-                    instants = Instantiate(this.totalBlocker, t);
-                    instants.name = "TotalBlocker";
-                    instants.transform.LookAt(instants.transform.position + t.forward);
-                    break;
-
                 case BlockerType.Down:
                     instants = Instantiate(this.dirBlocker, t);
                     instants.name = "DirectionalBlocker";
@@ -329,6 +321,7 @@ namespace Idea_2.Editor
 
             if (!(instants.GetComponent<Blocker>() is { } b)) return;
 
+            b.inputBoard = this.setup.inputBoard;
             b.id = id;
             b.placeDirection = direction;
         }

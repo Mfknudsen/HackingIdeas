@@ -5,10 +5,10 @@ namespace Idea_2.InputBlocks
 {
     public class JumpBlock : InputBlock
     {
-        public override IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid)
+        public override IEnumerator TriggerInput(GridKey key, float timePerBlock)
         {
             Transform keyTransform = key.transform;
-            keyTransform.position = visualGrid.gridTransforms[id.x][id.y].position;
+            keyTransform.position = this.inputBoard.gridTransforms[id.x][id.y].position;
 
             float t = 0;
             Vector2Int idToMoveTo = id + this.idDir * 2;
@@ -26,8 +26,8 @@ namespace Idea_2.InputBlocks
             }
 
             keyTransform.position = keyTransform.position +
-                                    RightDir(visualGrid) * (this.idDir * 2).x +
-                                    UpDir(visualGrid) * (this.idDir * 2).y;
+                                    RightDir() * (this.idDir * 2).x +
+                                    UpDir() * (this.idDir * 2).y;
 
             while (t < timePerBlock)
             {

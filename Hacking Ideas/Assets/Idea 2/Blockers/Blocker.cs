@@ -5,6 +5,7 @@ namespace Idea_2.Blockers
 {
     public class Blocker : MonoBehaviour
     {
+        public InputBoard inputBoard;
         public PlaceDirection placeDirection;
         public Vector2Int id;
 
@@ -16,21 +17,21 @@ namespace Idea_2.Blockers
             _ => new Vector2Int(0, 1)
         };
 
-        protected static Vector3 RightDir(VisualGrid grid) =>
-            grid.gridTransforms[1][0].position - grid.gridTransforms[0][0].position;
+        protected Vector3 RightDir() =>
+            this.inputBoard.gridTransforms[1][0].position - this.inputBoard.gridTransforms[0][0].position;
 
-        protected static Vector3 UpDir(VisualGrid grid) =>
-            grid.gridTransforms[0][1].position - grid.gridTransforms[0][0].position;
+        protected Vector3 UpDir() =>
+            this.inputBoard.gridTransforms[0][1].position - this.inputBoard.gridTransforms[0][0].position;
 
-        public virtual IEnumerator Trigger(GridKey key, float timePerBlock, VisualGrid visualGrid,
-            InputBoard inputBoard)
+        public virtual IEnumerator Trigger(GridKey key, float timePerBlock, InputBoard inputBoard)
         {
-            key.transform.position = visualGrid.gridTransforms[id.x][id.y].position;
+            this.inputBoard = inputBoard;
+            key.transform.position = this.inputBoard.gridTransforms[id.x][id.y].position;
 
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + idDir.x, this.id.y + idDir.y);
 
-            Vector3 dir = UpDir(visualGrid) * this.idDir.y + RightDir(visualGrid) * this.idDir.x;
+            Vector3 dir = UpDir() * this.idDir.y + RightDir() * this.idDir.x;
 
             while (t < timePerBlock)
             {

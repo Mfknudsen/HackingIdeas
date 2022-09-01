@@ -9,7 +9,6 @@ namespace Idea_2
         public Vector2Int gridSize = new Vector2Int(3, 3);
         [HideInInspector] public Vector2Int currentSize;
         public InputBoard inputBoard;
-        public VisualGrid visualGrid;
         public Transform endPoint;
         [HideInInspector] public List<Vector2Int> keyStartPositions = new List<Vector2Int>();
 
@@ -39,16 +38,17 @@ namespace Idea_2
                 GridKey key = obj.GetComponent<GridKey>();
 
                 key.id = index;
-                key.visualGrid = this.visualGrid;
                 key.inputBoard = this.inputBoard;
 
-                Vector3 upDir = this.visualGrid.gridTransforms[0][1].position -
-                                this.visualGrid.gridTransforms[0][0].position,
-                    rightDir = this.visualGrid.gridTransforms[1][0].position -
-                               this.visualGrid.gridTransforms[0][0].position;
+                Vector3 upDir = this.inputBoard.gridTransforms[0][1].position -
+                                this.inputBoard.gridTransforms[0][0].position,
+                    rightDir = this.inputBoard.gridTransforms[1][0].position -
+                               this.inputBoard.gridTransforms[0][0].position;
 
-                key.transform.position = this.visualGrid.gridTransforms[0][0].position +
-                                         rightDir * index.x + upDir * index.y;
+                Transform keyT = key.transform;
+                keyT.position = this.inputBoard.gridTransforms[0][0].position +
+                                      rightDir * index.x + upDir * index.y;
+                keyT.localScale = Vector3.one * .1f;
             }
         }
 
@@ -57,12 +57,11 @@ namespace Idea_2
             currentSize = gridSize;
             //Setup Grid
             this.inputBoard.Setup(this.gridSize, this.tilePrefab);
-            this.visualGrid.Setup(this.gridSize, this.tilePrefab);
 
             this.keyStartPositions.Clear();
 
-            int xSize = this.visualGrid.gridTransforms.Count,
-                ySize = this.visualGrid.gridTransforms[0].Count;
+            int xSize = this.inputBoard.gridTransforms.Count,
+                ySize = this.inputBoard.gridTransforms[0].Count;
             Vector2Int endID = new Vector2Int(
                 Random.Range(0, xSize),
                 Random.Range(0, ySize));
@@ -90,13 +89,14 @@ namespace Idea_2
                 Mathf.Clamp(endID.x, 0, xSize - 1),
                 Mathf.Clamp(endID.y, 0, ySize - 1));
 
-            Vector3 pos = this.visualGrid.gridTransforms[checkFrom.x][checkFrom.y].position;
-            Vector3 upDir = this.visualGrid.gridTransforms[0][1].position -
-                            this.visualGrid.gridTransforms[0][0].position,
-                rightDir = this.visualGrid.gridTransforms[1][0].position -
-                           this.visualGrid.gridTransforms[0][0].position;
+            Vector3 pos = this.inputBoard.gridTransforms[checkFrom.x][checkFrom.y].position;
+            Vector3 upDir = this.inputBoard.gridTransforms[0][1].position -
+                            this.inputBoard.gridTransforms[0][0].position,
+                rightDir = this.inputBoard.gridTransforms[1][0].position -
+                           this.inputBoard.gridTransforms[0][0].position;
 
             this.endPoint.position = pos + upDir * extraDir.y + rightDir * extraDir.x;
+            this.endPoint.localScale = Vector3.one * .1f;
         }
     }
 }

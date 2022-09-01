@@ -23,7 +23,7 @@ namespace Idea_2
             block.table = this;
             block.inputBoard = trans.parent.GetComponentInChildren<InputBoard>();
 
-            obj.transform.Rotate(trans.up, Random.Range(0, 10));
+            obj.transform.Rotate(trans.up, Random.Range(0, 360));
 
             this.holding = obj;
             this.spawning = false;
@@ -47,16 +47,16 @@ namespace Idea_2
 
             GameObject obj = Instantiate(this.toSpawn);
 
-            Transform trans = transform;
-            Transform t = obj.transform;
-            t.position += trans.position + Vector3.up * .25f;
-            t.LookAt(Vector3.forward, Vector3.up);
+            Transform t = transform;
+            Transform objTransform = obj.transform;
+            objTransform.position += t.position + Vector3.up * .25f;
+            objTransform.LookAt(Vector3.forward, Vector3.up);
 
             InputBlock block = obj.GetComponent<InputBlock>();
             block.table = this;
-            block.inputBoard = trans.parent.GetComponentInChildren<InputBoard>();
+            block.inputBoard = t.parent.GetComponentInChildren<InputBoard>();
 
-            obj.transform.Rotate(trans.up, Random.Range(0, 10));
+            obj.transform.Rotate(t.up, Random.Range(0, 360));
 
             this.holding = obj;
             spawning = false;

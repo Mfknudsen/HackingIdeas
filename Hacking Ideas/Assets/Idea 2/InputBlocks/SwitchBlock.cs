@@ -7,9 +7,9 @@ namespace Idea_2.InputBlocks
     {
         private bool switched;
 
-        public override IEnumerator TriggerInput(GridKey key, float timePerBlock, VisualGrid visualGrid)
+        public override IEnumerator TriggerInput(GridKey key, float timePerBlock)
         {
-            key.transform.position = visualGrid.gridTransforms[id.x][id.y].position;
+            key.transform.position = this.inputBoard.gridTransforms[id.x][id.y].position;
 
             PlaceDirection switchedDir = this.placeDirection switch
             {
@@ -31,7 +31,7 @@ namespace Idea_2.InputBlocks
 
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + keyDir.x, this.id.y + keyDir.y);
-            Vector3 dir = UpDir(visualGrid) * keyDir.y + RightDir(visualGrid) * keyDir.x;
+            Vector3 dir = UpDir() * keyDir.y + RightDir() * keyDir.x;
 
             while (t < timePerBlock)
             {
