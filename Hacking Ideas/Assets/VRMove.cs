@@ -4,10 +4,10 @@ public class VRMove : MonoBehaviour
 {
     [SerializeField] private Transform camTransform;
     [SerializeField] private float moveSpeed = 1, rotSpeed = 1;
+    [SerializeField]private Transform dirTransform;
 
     private PlayerInput playerInput;
     private Vector2 moveDir = Vector2.zero, rotDir = Vector2.zero;
-    private Transform dirTransform;
 
     private void Start()
     {
@@ -27,7 +27,6 @@ public class VRMove : MonoBehaviour
             Mathf.Clamp(c.ReadValue<Vector2>().y, -1, 1)
         );
 
-        dirTransform = new GameObject("Direction Transform").transform;
         dirTransform.position = camTransform.position;
     }
 
