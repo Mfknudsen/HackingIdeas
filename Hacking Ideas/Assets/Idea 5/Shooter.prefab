@@ -365,5 +365,7 @@ MonoBehaviour:
   color: {r: 0, g: 0, b: 0, a: 0}
   rightHand: 0
   triggerThreshold: 0.35
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 8531079895546344662, guid: c54c61d19d122b94a9aca1c45a0c3c26,
+    type: 3}
   spawnPoint: {fileID: 285306526597996123}
+  cooldown: 0.75
