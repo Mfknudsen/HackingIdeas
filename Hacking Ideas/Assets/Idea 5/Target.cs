@@ -35,6 +35,7 @@ namespace Idea_5
 
             if (!this.danger)
                 ChangePoints(-1);
+            
             Destroy(gameObject);
         }
 
@@ -49,7 +50,7 @@ namespace Idea_5
             if (!this.danger)
                 ChangePoints(-1);
 
-            ParticleSystem particle = Instantiate(particlePrefab).GetComponent<ParticleSystem>();
+            ParticleSystem particle = Instantiate(this.particlePrefab).GetComponent<ParticleSystem>();
             particle.transform.position = t.position;
             ParticleSystem.MainModule particleSystemMain = particle.main;
             particleSystemMain.startColor = this.color;
@@ -76,7 +77,7 @@ namespace Idea_5
 
         private void ChangePoints(int change)
         {
-            GameObject obj = Instantiate(pointDisplay);
+            GameObject obj = Instantiate(this.pointDisplay);
             Transform t = transform;
             obj.transform.position = t.position;
             obj.transform.LookAt(obj.transform.position - t.forward);

@@ -13,11 +13,11 @@ namespace Idea_5
         private void Update()
         {
             Transform t = transform;
-            t.position += t.forward * (speed * Time.deltaTime);
+            t.position += t.forward * (this.speed * Time.deltaTime);
 
-            currentLife += Time.deltaTime;
+            this.currentLife += Time.deltaTime;
 
-            if (currentLife > 10)
+            if (this.currentLife > 10)
                 Destroy(gameObject);
         }
 

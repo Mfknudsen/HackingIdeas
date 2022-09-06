@@ -4,7 +4,7 @@ public class VRMove : MonoBehaviour
 {
     [SerializeField] private Transform camTransform;
     [SerializeField] private float moveSpeed = 1, rotSpeed = 1;
-    [SerializeField]private Transform dirTransform;
+    [SerializeField] private Transform dirTransform;
 
     private PlayerInput playerInput;
     private Vector2 moveDir = Vector2.zero, rotDir = Vector2.zero;
@@ -14,8 +14,8 @@ public class VRMove : MonoBehaviour
         this.playerInput = new PlayerInput();
         this.playerInput.Enable();
 
-        this.playerInput.Player.Move.performed += c => moveDir = c.ReadValue<Vector2>();
-        this.playerInput.Player.Move.canceled += c => moveDir = c.ReadValue<Vector2>();
+        this.playerInput.Player.Move.performed += c => this.moveDir = c.ReadValue<Vector2>();
+        this.playerInput.Player.Move.canceled += c => this.moveDir = c.ReadValue<Vector2>();
 
         this.playerInput.Player.Rot.performed += c =>
         {
@@ -27,20 +27,20 @@ public class VRMove : MonoBehaviour
             Mathf.Clamp(c.ReadValue<Vector2>().y, -1, 1)
         );
 
-        dirTransform.position = camTransform.position;
+        this.dirTransform.position = this.camTransform.position;
     }
 
     private void Update()
     {
-        Vector3 camPos = camTransform.position;
-        dirTransform.position = camPos;
-        Vector3 f = camTransform.forward;
+        Vector3 camPos = this.camTransform.position;
+        this.dirTransform.position = camPos;
+        Vector3 f = this.camTransform.forward;
         Vector3 forward = new Vector3(f.x, 0, f.z);
-        dirTransform.LookAt(camPos + forward, Vector3.up);
+        this.dirTransform.LookAt(camPos + forward, Vector3.up);
 
-        transform.RotateAround(camPos, Vector3.up, rotDir.x * rotSpeed * Time.deltaTime);
+        transform.RotateAround(camPos, Vector3.up, this.rotDir.x * this.rotSpeed * Time.deltaTime);
 
-        Vector3 move = dirTransform.forward * this.moveDir.y + dirTransform.right * this.moveDir.x;
+        Vector3 move = this.dirTransform.forward * this.moveDir.y + this.dirTransform.right * this.moveDir.x;
         move.Normalize();
         this.transform.position += move * (this.moveSpeed * Time.deltaTime);
     }
