@@ -524,6 +524,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8185382557574340508, guid: 66a82124b972ff244b99ca876d09ac1b,
+        type: 3}
+      propertyPath: setup
+      value: 
+      objectReference: {fileID: 854223576}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66a82124b972ff244b99ca876d09ac1b, type: 3}
 --- !u!114 &209533970 stripped
@@ -760,6 +765,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &854223576 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3810289343457316152, guid: fec818057041b4742b242da9a7b27424,
+    type: 3}
+  m_PrefabInstance: {fileID: 24880865236935209}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95b0fc795d8787e4693217bbdc04d10e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &979632333
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -843,6 +860,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8185382557574340508, guid: 66a82124b972ff244b99ca876d09ac1b,
+        type: 3}
+      propertyPath: setup
+      value: 
+      objectReference: {fileID: 854223576}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66a82124b972ff244b99ca876d09ac1b, type: 3}
 --- !u!114 &979632334 stripped
@@ -1279,6 +1301,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8185382557574340508, guid: 66a82124b972ff244b99ca876d09ac1b,
+        type: 3}
+      propertyPath: setup
+      value: 
+      objectReference: {fileID: 854223576}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66a82124b972ff244b99ca876d09ac1b, type: 3}
 --- !u!114 &7620402483339142659 stripped

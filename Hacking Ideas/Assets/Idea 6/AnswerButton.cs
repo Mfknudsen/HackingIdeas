@@ -22,7 +22,8 @@ namespace Idea_6
         {
             transform.parent = this.originParent;
 
-            this.setup.AnswerQuestion(this.answer);
+            if (this.answer != null)
+                this.setup.AnswerQuestion(this.answer);
         }
 
         public void SetAnswer(Answer answer)

@@ -23,15 +23,18 @@ namespace Idea_6
         private Coroutine currentCoroutine;
         private Question currentQuestion;
 
-        private void Start()
+        private IEnumerator Start()
         {
             if (this.questions.Count < this.possibleAnswerPositions.Count)
             {
                 this.questionText.text = "Not enough possible answers";
-                return;
+                yield break;
             }
-            
+
             this.questionText.text = this.goal + " corrects => Victory\n" + this.maxMissed + " wrongs => Defeat";
+
+            yield return new WaitForSeconds(8);
+
             this.currentCoroutine = StartCoroutine(ShowNewQuestion());
         }
 
@@ -72,7 +75,7 @@ namespace Idea_6
         {
             foreach (AnswerButton answerPos in this.possibleAnswerPositions)
                 answerPos.SetAnswer(null);
-            
+
             if (this.currentQuestion.IsCorrect(answer))
             {
                 this.currentCorrect++;
