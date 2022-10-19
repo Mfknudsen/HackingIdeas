@@ -42,6 +42,6 @@ public class VRMove : MonoBehaviour
 
         Vector3 move = this.dirTransform.forward * this.moveDir.y + this.dirTransform.right * this.moveDir.x;
         move.Normalize();
-        this.transform.position += move * (this.moveSpeed * Time.deltaTime);
+        transform.position += move * (this.moveSpeed * Time.deltaTime);
     }
 }

@@ -6,24 +6,11 @@ namespace Idea_1
     {
         [HideInInspector]
         public Path path;
-
-        public Color anchorCol = Color.red;
-        public Color controlCol = Color.white;
-        public Color segmentCol = Color.green;
-        public Color selectedSegmentCol = Color.yellow;
-        public float anchorDiameter = .1f;
-        public float controlDiameter = .075f;
-        public bool displayControlPoints = true;
-
-        public Path CreatePath()
-        {
+        
+        private void CreatePath() => 
             this.path = new Path(transform.position);
-            return this.path;
-        }
 
-        private void Reset()
-        {
+        private void Reset() => 
             CreatePath();
-        }
     }
 }

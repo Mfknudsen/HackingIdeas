@@ -21,54 +21,6 @@ namespace Idea_1
             };
         }
 
-        public Vector3 this[int i] => this.points[i];
-
-        public bool IsClosed
-        {
-            get => this.isClosed;
-            set
-            {
-                if (this.isClosed != value)
-                {
-                    this.isClosed = value;
-
-                    if (this.isClosed)
-                    {
-                        this.points.Add(this.points[this.points.Count - 1] * 2 - this.points[this.points.Count - 2]);
-                        this.points.Add(this.points[0] * 2 - this.points[1]);
-                        if (this.autoSetControlPoints)
-                        {
-                            AutoSetAnchorControlPoints(0);
-                            AutoSetAnchorControlPoints(this.points.Count - 3);
-                        }
-                    }
-                    else
-                    {
-                        this.points.RemoveRange(this.points.Count - 2, 2);
-                        if (this.autoSetControlPoints) AutoSetStartAndEndControls();
-                    }
-                }
-            }
-        }
-
-        public bool AutoSetControlPoints
-        {
-            get => this.autoSetControlPoints;
-            set
-            {
-                if (this.autoSetControlPoints != value)
-                {
-                    this.autoSetControlPoints = value;
-                    if (this.autoSetControlPoints)
-                    {
-                        AutoSetAllControlPoints();
-                    }
-                }
-            }
-        }
-
-        public int NumPoints => this.points.Count;
-
         public int NumSegments => this.points.Count / 3;
 
         public void AddSegment(Vector3 anchorPos)
@@ -92,19 +44,18 @@ namespace Idea_1
 
         public void DeleteSegment(int anchorIndex)
         {
-            if (this.NumSegments > 2 || !this.isClosed && this.NumSegments > 1)
+            if (NumSegments <= 2 && (this.isClosed || NumSegments <= 1)) return;
+            
+            if (anchorIndex == 0)
             {
-                if (anchorIndex == 0)
-                {
-                    if (this.isClosed) this.points[this.points.Count - 1] = this.points[2];
+                if (this.isClosed) this.points[this.points.Count - 1] = this.points[2];
 
-                    this.points.RemoveRange(0, 3);
-                }
-                else if (anchorIndex == this.points.Count - 1 && !this.isClosed)
-                    this.points.RemoveRange(anchorIndex - 2, 3);
-                else
-                    this.points.RemoveRange(anchorIndex - 1, 3);
+                this.points.RemoveRange(0, 3);
             }
+            else if (anchorIndex == this.points.Count - 1 && !this.isClosed)
+                this.points.RemoveRange(anchorIndex - 2, 3);
+            else
+                this.points.RemoveRange(anchorIndex - 1, 3);
         }
 
         public Vector3[] GetPointsInSegment(int i) => new[]
@@ -155,7 +106,7 @@ namespace Idea_1
             Vector3 previousPoint = this.points[0];
             float dstSinceLastEvenPoint = 0;
 
-            for (int segmentIndex = 0; segmentIndex < this.NumSegments; segmentIndex++)
+            for (int segmentIndex = 0; segmentIndex < NumSegments; segmentIndex++)
             {
                 Vector3[] p = GetPointsInSegment(segmentIndex);
                 float controlNetLength = Vector3.Distance(p[0], p[1]) + Vector3.Distance(p[1], p[2]) +
@@ -238,16 +189,13 @@ namespace Idea_1
 
         private void AutoSetStartAndEndControls()
         {
-            if (!this.isClosed)
-            {
-                this.points[1] = (this.points[0] + this.points[2]) * .5f;
-                this.points[this.points.Count - 2] = (this.points[this.points.Count - 1] + this.points[this.points.Count - 3]) * .5f;
-            }
+            if (this.isClosed) return;
+            
+            this.points[1] = (this.points[0] + this.points[2]) * .5f;
+            this.points[this.points.Count - 2] = (this.points[this.points.Count - 1] + this.points[this.points.Count - 3]) * .5f;
         }
 
-        private int LoopIndex(int i)
-        {
-            return (i + this.points.Count) % this.points.Count;
-        }
+        private int LoopIndex(int i) => 
+            (i + this.points.Count) % this.points.Count;
     }
 }

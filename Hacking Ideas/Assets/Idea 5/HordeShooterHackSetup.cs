@@ -47,13 +47,13 @@ namespace Idea_5
 
         private void Update()
         {
-            this.textMeshPro.text = hits + " / " + goal;
+            this.textMeshPro.text = this.hits + " / " + this.goal;
 
             if (this.hits < this.goal && this.hits > 0) return;
 
             foreach (Target c in GetComponentsInChildren<Target>())
             {
-                ParticleSystem particle = Instantiate(particlePrefab).GetComponent<ParticleSystem>();
+                ParticleSystem particle = Instantiate(this.particlePrefab).GetComponent<ParticleSystem>();
                 particle.transform.position = c.transform.position;
                 ParticleSystem.MainModule particleSystemMain = particle.main;
                 particleSystemMain.startColor = c.color;
@@ -76,7 +76,7 @@ namespace Idea_5
             {
                 yield return new WaitForSeconds(this.timeBetweenSpawn);
 
-                if (spawnAgainstPlayer)
+                if (this.spawnAgainstPlayer)
                 {
                     GameObject obj = Instantiate(this.targetPrefab, transform);
 
@@ -85,7 +85,7 @@ namespace Idea_5
                                   Vector3.forward * Random.Range(-.75f, -.2f);
                     dir.Normalize();
 
-                    Vector3 playerPos = playerTransform.position;
+                    Vector3 playerPos = this.playerTransform.position;
                     obj.transform.position =
                         playerPos + dir * Random.Range(this.spawnDistance.x, this.spawnDistance.y);
                     obj.transform.LookAt(playerPos + Vector3.up);
@@ -93,13 +93,13 @@ namespace Idea_5
                     Target target = obj.GetComponent<Target>();
                     target.color = Random.Range(0f, 1f) < .95f
                         ? new[] { this.leftColor, this.rightColor, this.dangerColor }[index.UniqueIndex(3)]
-                        : bonusColor;
+                        : this.bonusColor;
                     target.playerPos = playerPos;
                     target.setup = this;
                     target.moveDir = target.transform.forward;
 
                     target.danger = target.color == this.dangerColor;
-                    target.bonus = target.color == bonusColor;
+                    target.bonus = target.color == this.bonusColor;
 
                     Renderer r = target.GetComponent<Renderer>();
                     r.material.EnableKeyword("_Color");
@@ -114,7 +114,7 @@ namespace Idea_5
                                   Vector3.forward * Random.Range(-.75f, -.2f);
                     dir.Normalize();
 
-                    Vector3 playerPos = playerTransform.position;
+                    Vector3 playerPos = this.playerTransform.position;
                     obj.transform.position =
                         playerPos + dir * Random.Range(this.spawnDistance.x, this.spawnDistance.y);
                     obj.transform.LookAt(obj.transform.position + obj.transform.forward);
@@ -122,14 +122,14 @@ namespace Idea_5
                     Target target = obj.GetComponent<Target>();
                     target.color = Random.Range(0f, 1f) < .95f
                         ? new[] { this.leftColor, this.rightColor, this.dangerColor }[index.UniqueIndex(3)]
-                        : bonusColor;
+                        : this.bonusColor;
                     target.playerPos = playerPos;
                     target.setup = this;
                     target.moveDir = new Vector3(-dir.x, Random.Range(-.1f, .1f), 0).normalized;
                     target.life = Random.Range(10, 20);
 
                     target.danger = target.color == this.dangerColor;
-                    target.bonus = target.color == bonusColor;
+                    target.bonus = target.color == this.bonusColor;
 
                     Renderer r = target.GetComponent<Renderer>();
                     r.material.EnableKeyword("_Color");

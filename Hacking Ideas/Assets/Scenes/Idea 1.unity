@@ -2649,7 +2649,7 @@ MonoBehaviour:
   - {x: -9.668282, y: -0.08391331, z: -3.563323}
   - {x: -9.832139, y: -0.079045646, z: -3.6778965}
   - {x: -9.996046, y: -0.07410272, z: -3.792396}
-  onSplitedPath: 0
+  onSplitPath: 0
   frontTransfer: {fileID: 687498745}
   frontTransferTo: 1
   middleTransfer: {fileID: 1671492011}
@@ -2662,7 +2662,7 @@ MonoBehaviour:
   playerDir: {x: 0, y: 0, z: 0}
   indexDir: 0
   readyNextUpdate: 0
-  DisplayGizmo: 1
+  displayGizmo: 1
   frontColor: {r: 0, g: 1, b: 0, a: 1}
   backColor: {r: 1, g: 0, b: 0.049950123, a: 1}
   middleColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -5383,7 +5383,7 @@ MonoBehaviour:
   - {x: -9.0498295, y: 1.2331917, z: 5.27611}
   - {x: -9.232488, y: 1.2564642, z: 5.354174}
   - {x: -9.415564, y: 1.2803316, z: 5.4310727}
-  onSplitedPath: 0
+  onSplitPath: 0
   frontTransfer: {fileID: 1421405908}
   frontTransferTo: 2
   middleTransfer: {fileID: 1154483815}
@@ -5396,7 +5396,7 @@ MonoBehaviour:
   playerDir: {x: 0, y: 0, z: 0}
   indexDir: 0
   readyNextUpdate: 0
-  DisplayGizmo: 1
+  displayGizmo: 1
   frontColor: {r: 0, g: 1, b: 0, a: 1}
   backColor: {r: 1, g: 0, b: 0.049950123, a: 1}
   middleColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -8212,7 +8212,7 @@ MonoBehaviour:
   splitTotalPoints: []
   calculatedPath: []
   splitCalculatedPath: []
-  onSplitedPath: 0
+  onSplitPath: 0
   frontTransfer: {fileID: 0}
   frontTransferTo: 0
   middleTransfer: {fileID: 0}
@@ -8225,7 +8225,7 @@ MonoBehaviour:
   playerDir: {x: 0, y: 0, z: 0}
   indexDir: 0
   readyNextUpdate: 1
-  DisplayGizmo: 1
+  displayGizmo: 1
   frontColor: {r: 0, g: 1, b: 0, a: 1}
   backColor: {r: 1, g: 0, b: 0.049950123, a: 1}
   middleColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -9106,7 +9106,7 @@ MonoBehaviour:
   - {x: -10.466519, y: 2.0542111, z: 2.2309082}
   - {x: -10.661892, y: 2.0318792, z: 2.2673898}
   - {x: -10.857177, y: 2.0091047, z: 2.3040662}
-  onSplitedPath: 0
+  onSplitPath: 0
   frontTransfer: {fileID: 1421405908}
   frontTransferTo: 1
   middleTransfer: {fileID: 687498745}
@@ -9119,7 +9119,7 @@ MonoBehaviour:
   playerDir: {x: 0, y: 0, z: 0}
   indexDir: 0
   readyNextUpdate: 0
-  DisplayGizmo: 1
+  displayGizmo: 1
   frontColor: {r: 0, g: 1, b: 0, a: 1}
   backColor: {r: 1, g: 0, b: 0.049950123, a: 1}
   middleColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -9504,7 +9504,7 @@ MonoBehaviour:
   - {x: -9.813896, y: 3.9896357, z: 4.233581}
   - {x: -10.010566, y: 3.9683921, z: 4.2630687}
   - {x: -10.207324, y: 3.9467766, z: 4.2916837}
-  onSplitedPath: 0
+  onSplitPath: 0
   frontTransfer: {fileID: 1154483815}
   frontTransferTo: 2
   middleTransfer: {fileID: 1671492011}
@@ -9517,7 +9517,7 @@ MonoBehaviour:
   playerDir: {x: 0, y: 0, z: 0}
   indexDir: 0
   readyNextUpdate: 0
-  DisplayGizmo: 1
+  displayGizmo: 1
   frontColor: {r: 0, g: 1, b: 0, a: 1}
   backColor: {r: 1, g: 0, b: 0.049950123, a: 1}
   middleColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -11966,7 +11966,7 @@ MonoBehaviour:
   - {x: -9.005043, y: 4.2803187, z: 5.4809175}
   - {x: -9.174474, y: 4.257952, z: 5.584807}
   - {x: -9.344002, y: 4.235286, z: 5.6884727}
-  onSplitedPath: 0
+  onSplitPath: 0
   frontTransfer: {fileID: 1154483815}
   frontTransferTo: 2
   middleTransfer: {fileID: 1671492011}
@@ -11979,7 +11979,7 @@ MonoBehaviour:
   playerDir: {x: 0, y: 0, z: 0}
   indexDir: 0
   readyNextUpdate: 0
-  DisplayGizmo: 1
+  displayGizmo: 1
   frontColor: {r: 0, g: 1, b: 0, a: 1}
   backColor: {r: 1, g: 0, b: 0.049950123, a: 1}
   middleColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -12730,7 +12730,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineCount: 6
   maxAngle: 1.2
-  minPointDist: 5
   bezierDist: 0.2
   allLines:
   - {fileID: 687498745}
@@ -12739,13 +12738,10 @@ MonoBehaviour:
   - {fileID: 1154483815}
   - {fileID: 1421405908}
   - {fileID: 355605273}
-  chanceOfSelfConnect: 0.1
-  maxSelfConnects: 2
   gatePrefab: {fileID: 500924548172108787, guid: e90b8e4e6c613744b8d14730be54c162,
     type: 3}
   lineMat: {fileID: 2100000, guid: f8637ec9a9e88e14e909258aad7efb8e, type: 2}
-  startSize: 0.05
-  endSize: 0.05
+  lineSize: 0.05
   colors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 0, g: 0, b: 1, a: 1}
@@ -12756,7 +12752,7 @@ MonoBehaviour:
   - {r: 0.5566038, g: 0.30340365, b: 0, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   generationReferencePoint: {fileID: 1043287579}
-  temp: {fileID: 4916482144781133355, guid: 4751fa4a333b454469874aba9442c7b8, type: 3}
+  goal: {fileID: 4916482144781133355, guid: 4751fa4a333b454469874aba9442c7b8, type: 3}
   sequenceLength: 10
   goalSequenceTransform: {fileID: 292703786}
   currentSequenceTransform: {fileID: 759338798}
@@ -12776,7 +12772,6 @@ MonoBehaviour:
   sequenceMat: {fileID: 2100000, guid: 3428f69913f660a4dbfcee4fa56c5c2c, type: 2}
   playerArrow: {fileID: 1058942941}
   playerControls: 0
-  displayBounds: 1
   displayLineGizmos: 1
   frontColor: {r: 0, g: 1, b: 0, a: 1}
   backColor: {r: 1, g: 0, b: 0.049950123, a: 1}
@@ -13584,7 +13579,7 @@ MonoBehaviour:
   - {x: -9.5590105, y: -2.4063122, z: -3.7401712}
   - {x: -9.737336, y: -2.3460128, z: -3.8077219}
   - {x: -9.915733, y: -2.2842703, z: -3.8737695}
-  onSplitedPath: 0
+  onSplitPath: 0
   frontTransfer: {fileID: 687498745}
   frontTransferTo: 1
   middleTransfer: {fileID: 355605273}
@@ -13597,7 +13592,7 @@ MonoBehaviour:
   playerDir: {x: 0, y: 0, z: 0}
   indexDir: 0
   readyNextUpdate: 0
-  DisplayGizmo: 1
+  displayGizmo: 1
   frontColor: {r: 0, g: 1, b: 0, a: 1}
   backColor: {r: 1, g: 0, b: 0.049950123, a: 1}
   middleColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}

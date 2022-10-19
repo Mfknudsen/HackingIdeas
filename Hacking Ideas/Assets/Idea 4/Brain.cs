@@ -26,43 +26,42 @@ namespace Idea_4
 
         protected override void Start()
         {
-            cam = Camera.main;
+            this.cam = Camera.main;
         }
 
         private void Update()
         {
-            if (cam != null)
+            if (this.cam != null)
             {
                 Vector3 position = this.textMeshPro.transform.position;
-                Vector3 dir = cam.transform.position - position;
+                Vector3 dir = this.cam.transform.position - position;
                 dir = new Vector3(dir.x, 0, dir.z);
                 this.textMeshPro.transform.LookAt(position - dir, Vector3.up);
             }
             else
-                cam = Camera.main;
+                this.cam = Camera.main;
 
             this.textMeshPro.text = Mathf.FloorToInt((this.maxDamage - this.currentDamage) * 10) / 10f +
                                     " / " + this.maxDamage;
 
             if (this.cutLines.All(c => c.done))
-                textMeshPro.text = "Victory!";
-            else if (this.currentDamage >= this.maxDamage)
-                textMeshPro.text = "Dead!";
+                this.textMeshPro.text = "Victory!";
+            else if (this.currentDamage >= this.maxDamage) this.textMeshPro.text = "Dead!";
 
-            if (this.grabbedBy == null || cam == null) return;
+            if (this.grabbedBy == null || this.cam == null) return;
             {
                 if (this.grabbedBy.position == this.prePosition) return;
 
                 Vector3 center = transform.position;
                 Vector3 curPos = this.grabbedBy.position;
 
-                Vector2 camPos = cam.WorldToScreenPoint(curPos),
-                    preCamPos = cam.WorldToScreenPoint(prePosition);
+                Vector2 camPos = this.cam.WorldToScreenPoint(curPos),
+                    preCamPos = this.cam.WorldToScreenPoint(this.prePosition);
 
                 Vector2 dir = camPos - preCamPos;
 
-                transform.RotateAround(center, cam.transform.up, -dir.x * .3f);
-                transform.RotateAround(center, cam.transform.right, dir.y * .3f);
+                transform.RotateAround(center, this.cam.transform.up, -dir.x * .3f);
+                transform.RotateAround(center, this.cam.transform.right, dir.y * .3f);
 
                 this.prePosition = curPos;
             }
@@ -124,12 +123,12 @@ namespace Idea_4
                                 1f / count * j),
                             center));
 
-                cutLines.Add(new GameObject("Cutline").AddComponent<CutLine>().Setup(startPoint, endPoint,
+                this.cutLines.Add(new GameObject("Cutline").AddComponent<CutLine>().Setup(startPoint, endPoint,
                     between.ToArray(),
-                    Instantiate(indicator), this));
+                    Instantiate(this.indicator), this));
             }
 
-            foreach (CutLine cutLine in cutLines)
+            foreach (CutLine cutLine in this.cutLines)
             {
                 GameObject obj = cutLine.gameObject;
                 obj.transform.parent = t;
@@ -146,7 +145,7 @@ namespace Idea_4
                 lineRenderer.endColor = Color.cyan;
                 lineRenderer.startWidth = .003f;
                 lineRenderer.endWidth = .003f;
-                lineRenderer.material = lineMat;
+                lineRenderer.material = this.lineMat;
 
                 List<Vector3> positions = new List<Vector3> { cutLine.startPoint };
                 positions.AddRange(cutLine.between);

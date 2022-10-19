@@ -27,7 +27,7 @@ namespace Idea_4
 
             if (this.currentLine == null)
             {
-                Vector3 point = cutPoint.position;
+                Vector3 point = this.cutPoint.position;
                 float dist = 10;
                 foreach (CutLine c in this.setup.brain.cutLines)
                 {
@@ -50,12 +50,12 @@ namespace Idea_4
 
         protected override void OnGrab()
         {
-            active = true;
+            this.active = true;
         }
 
         protected override void OnRelease()
         {
-            active = false;
+            this.active = false;
         }
     }
 }

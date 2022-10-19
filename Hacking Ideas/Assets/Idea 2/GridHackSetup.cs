@@ -19,18 +19,18 @@ namespace Idea_2
 
         private void OnValidate()
         {
-            for (int i = 0; i < keyStartPositions.Count; i++)
+            for (int i = 0; i < this.keyStartPositions.Count; i++)
             {
-                keyStartPositions[i] = new Vector2Int(
-                    Mathf.Clamp(keyStartPositions[i].x, -1, gridSize.x),
-                    Mathf.Clamp(keyStartPositions[i].y, -1, gridSize.y)
+                this.keyStartPositions[i] = new Vector2Int(
+                    Mathf.Clamp(this.keyStartPositions[i].x, -1, this.gridSize.x),
+                    Mathf.Clamp(this.keyStartPositions[i].y, -1, this.gridSize.y)
                 );
             }
         }
 
         private void Start()
         {
-            foreach (Vector2Int index in keyStartPositions)
+            foreach (Vector2Int index in this.keyStartPositions)
             {
                 GameObject obj = Instantiate(this.keyPrefab, transform);
                 obj.name = "Key";
@@ -54,7 +54,7 @@ namespace Idea_2
 
         public void Setup()
         {
-            currentSize = gridSize;
+            this.currentSize = this.gridSize;
             //Setup Grid
             this.inputBoard.Setup(this.gridSize, this.tilePrefab);
 

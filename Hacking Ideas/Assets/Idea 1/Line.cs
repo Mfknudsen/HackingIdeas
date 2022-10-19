@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Idea_1
 {
+    /// <summary>
+    /// Enum to set what gate the key should transfer to when switching.
+    /// </summary>
     public enum TransferTo
     {
         Front,
@@ -10,40 +13,105 @@ namespace Idea_1
         Back
     }
 
+    /// <summary>
+    /// The line the key will be travelling on.
+    /// </summary>
     public class Line : MonoBehaviour
     {
         #region Values
 
+        /// <summary>
+        /// 
+        /// </summary>
         public HackLinesSetup setup;
+
+        /// <summary>
+        /// 
+        /// </summary>
         [HideInInspector] public Vector3 front, back, middle, fNormal, mNormal, bNormal;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public GameObject frontGate, middleGate, backGate;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Color color;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<Vector3> totalPoints = new List<Vector3>(), splitTotalPoints = new List<Vector3>();
+
+        /// <summary>
+        /// 
+        /// </summary>
         private Path bezierPath, splitPath;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Vector3[] calculatedPath, splitCalculatedPath;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool onSplitPath;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Space] public Line frontTransfer;
+
         public int frontTransferTo;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Line middleTransfer;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int middleTransferTo;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public Line backTransfer;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int backTransferTo;
 
+        /// <summary>
+        /// 
+        /// </summary>
         private LineRenderer[] lineRenders;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int index, splitIndex, crossIndex;
 
-        //V1
+        /// <summary>
+        /// Used for control V1.
+        /// </summary>
         private bool disableCrossDirectionUpdate;
 
-        //V2
+        /// <summary>
+        /// Used for control V2.
+        /// </summary>
         public Vector3 playerDir = Vector3.zero;
+
         public int indexDir;
         public bool readyNextUpdate;
 
 #if UNITY_EDITOR
+        //For debugging.
         public bool displayGizmo = true;
         public Color frontColor = Color.green, backColor = Color.blue, middleColor = Color.yellow;
 #endif
@@ -56,10 +124,10 @@ namespace Idea_1
         {
             this.lineRenders = GetComponentsInChildren<LineRenderer>();
 
-            for (int i = 0; i < lineRenders.Length; i++)
+            foreach (LineRenderer lineRenderer in this.lineRenders)
             {
-                this.lineRenders[i].startColor = this.color;
-                this.lineRenders[i].endColor = this.color;
+                lineRenderer.startColor = this.color;
+                lineRenderer.endColor = this.color;
             }
 
             if (this.frontGate != null && this.frontTransfer != null)
@@ -69,7 +137,7 @@ namespace Idea_1
             if (this.middleGate != null && this.middleTransfer != null)
                 this.middleGate.GetComponentInChildren<Light>().color = this.middleTransfer.color;
 
-            index = Mathf.FloorToInt(totalPoints.Count / 2f);
+            this.index = Mathf.FloorToInt(this.totalPoints.Count / 2f);
         }
 
 #if UNITY_EDITOR
@@ -77,7 +145,7 @@ namespace Idea_1
         {
             if (!this.displayGizmo) return;
 
-            if (frontTransfer != null)
+            if (this.frontTransfer != null)
             {
                 Gizmos.color = this.frontColor;
                 Vector3 dir = this.frontTransferTo switch
@@ -94,7 +162,7 @@ namespace Idea_1
                 Gizmos.DrawLine(this.front + dir / 2, this.front + dir);
             }
 
-            if (middleTransfer != null)
+            if (this.middleTransfer != null)
             {
                 Gizmos.color = this.middleColor;
                 Vector3 dir = this.middleTransferTo switch
@@ -111,7 +179,7 @@ namespace Idea_1
                 Gizmos.DrawLine(this.middle + dir / 2, this.middle + dir);
             }
 
-            if (backTransfer != null)
+            if (this.backTransfer != null)
             {
                 Gizmos.color = this.backColor;
                 Vector3 dir = this.backTransferTo switch
@@ -179,7 +247,7 @@ namespace Idea_1
 
             for (int i = 0; i < totalPointCount - 1; i++)
             {
-                Vector3 newPos = totalPoints[1] +
+                Vector3 newPos = this.totalPoints[1] +
                                  between / totalPointCount * (i + 1) +
                                  Vector3.Cross((this.fNormal + this.bNormal) / 2, between.normalized) *
                                  Random.Range(0f, 1f) +
@@ -213,7 +281,7 @@ namespace Idea_1
             //Split Path
             this.splitTotalPoints = new List<Vector3>();
             int splitCalcIndex = Mathf.FloorToInt(totalPointCount / 2f) + 2;
-            this.splitTotalPoints.Add(totalPoints[splitCalcIndex]);
+            this.splitTotalPoints.Add(this.totalPoints[splitCalcIndex]);
 
             Vector3 refPos = refPoint.position;
             refPos += Vector3.up * (this.totalPoints[splitCalcIndex].y - refPos.y);
@@ -348,7 +416,7 @@ namespace Idea_1
                     ? 0
                     : 1;
 
-                if (points[selectedIndex] == front)
+                if (points[selectedIndex] == this.front)
                 {
                     if (points[Mathf.Abs(selectedIndex - 1)] == this.back)
                         key.facingHigherIndexPoint = !key.facingHigherIndexPoint;

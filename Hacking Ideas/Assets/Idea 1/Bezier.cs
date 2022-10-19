@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace Idea_1
 {
+    /// <summary>
+    /// Used for calculating bezier curves that will be used for the paths.
+    /// </summary>
     public static class Bezier
     {
         public static Vector3 EvaluateQuadratic(Vector3 a, Vector3 b, Vector3 c, float t)

@@ -59,7 +59,7 @@ namespace Idea_2
             obj.transform.Rotate(t.up, Random.Range(0, 360));
 
             this.holding = obj;
-            spawning = false;
+            this.spawning = false;
         }
     }
 }

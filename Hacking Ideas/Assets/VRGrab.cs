@@ -27,10 +27,9 @@ public class VRGrab : MonoBehaviour
 
     private void Update()
     {
-        for (int i = objectsInRange.Count - 1; i >= 0; i--)
+        for (int i = this.objectsInRange.Count - 1; i >= 0; i--)
         {
-            if (objectsInRange[i] == null)
-                objectsInRange.RemoveAt(i);
+            if (this.objectsInRange[i] == null) this.objectsInRange.RemoveAt(i);
         }
 
         float grib = (this.rightHand

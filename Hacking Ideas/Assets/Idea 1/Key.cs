@@ -6,33 +6,54 @@ namespace Idea_1
     {
         #region Values
 
-        //currentLine must be set before start
-        //- The ball will start on this line
-        //- Is set during line auto setup
+        /// <summary>
+        /// CurrentLine must be set before start.
+        /// The ball will start on this line.
+        /// Is set during line auto setup.
+        /// </summary>
         [HideInInspector] public Line currentLine;
+
+        /// <summary>
+        /// The keys travel speed.
+        /// </summary>
         public float speed = 2f;
+
+        /// <summary>
+        /// Reference to the minigame setup.
+        /// </summary>
         public HackLinesSetup setup;
 
-        //If the ball is to travel forward or backwards
+        /// <summary>
+        /// If the ball is to travel forward or backwards
+        /// </summary>
         private Vector2 inputDir;
+
+        /// <summary>
+        /// Getting input from the player to decide when and how it should move.
+        /// </summary>
         private PlayerInput playerInput;
+
+        /// <summary>
+        /// Used when traveling between points on a line.
+        /// Will also be used when switching lines to decide if the key should face out from the gate or the other way.
+        /// </summary>
         [HideInInspector] public bool facingHigherIndexPoint;
 
         #endregion
 
         #region MonoBehaviour
 
-        private void Start()
-        {
+        /// <summary>
+        /// Resets it's position and rotation.
+        /// </summary>
+        private void Start() =>
             ResetStartPosition();
-        }
 
+        /// <summary>
+        /// Get the input and move the key.
+        /// </summary>
         private void Update()
         {
-            //Get input
-            // --
-            //- Later change from keyboard input to something like a lever input for VR controlls.
-            // --
             this.inputDir = new Vector2(
                 this.playerInput.Player.GrabRight.ReadValue<float>(),
                 this.playerInput.Player.GrabLeft.ReadValue<float>());
@@ -42,8 +63,12 @@ namespace Idea_1
             dir = Mathf.Clamp(dir, -1, 1);
 
             if (this.setup.playerControls == Controls.V1)
-                transform.position += transform.forward * (dir * this.speed * Time.deltaTime);
+            {
+                Transform keyTransform = transform;
+                keyTransform.position += keyTransform.forward * (dir * this.speed * Time.deltaTime);
+            }
 
+            //Update the keys position using the current line it's placed on.
             this.currentLine.UpdateDist(this, dir);
         }
 
@@ -51,18 +76,27 @@ namespace Idea_1
 
         #region In
 
+        /// <summary>
+        /// Set the current line when switching between it's current and a new line.
+        /// If the new line is the end line then it will be disable.
+        /// </summary>
+        /// <param name="set">The new line to set</param>
+        /// <param name="transferTo">Which gate to come out of</param>
+        /// <param name="dir">What direction the key will face</param>
         public void SetCurrentLine(Line set, TransferTo transferTo, float dir)
         {
+            //Check if the new line is the end.
             if (set is EndLine)
             {
                 transform.position = set.front;
-                this.enabled = false;
+                enabled = false;
                 return;
             }
 
             set.indexDir = 0;
-            set.readyNextUpdate = currentLine.readyNextUpdate;
+            set.readyNextUpdate = this.currentLine.readyNextUpdate;
 
+            //Transfer the key to one of the gates on the new line.
             if (transferTo != TransferTo.Middle)
             {
                 set.index = transferTo == TransferTo.Back ? 1 : set.calculatedPath.Length - 2;
@@ -89,6 +123,7 @@ namespace Idea_1
                 this.currentLine = set;
             }
 
+            //Extra step for how one of the control versions act when switching line.
             if (this.setup.playerControls == Controls.V2)
             {
                 if (transferTo != TransferTo.Back && set.indexDir == 1)
@@ -98,6 +133,10 @@ namespace Idea_1
             }
         }
 
+        /// <summary>
+        /// Resets the keys position and current line to the root line.
+        /// Same as when the minigame first starts.
+        /// </summary>
         public void ResetStartPosition()
         {
             this.currentLine = transform.parent.GetComponent<HackLinesSetup>().GetRootLine();
@@ -113,8 +152,8 @@ namespace Idea_1
 
             this.facingHigherIndexPoint = true;
 
-            currentLine.onSplitPath = false;
-            currentLine.splitIndex = 0;
+            this.currentLine.onSplitPath = false;
+            this.currentLine.splitIndex = 0;
         }
 
         #endregion

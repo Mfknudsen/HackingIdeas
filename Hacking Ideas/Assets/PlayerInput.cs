@@ -102,11 +102,11 @@ public class @PlayerInput : IInputActionCollection, IDisposable
     ""controlSchemes"": []
 }");
         // Player
-        m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-        m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
-        m_Player_Rot = m_Player.FindAction("Rot", throwIfNotFound: true);
-        m_Player_GrabRight = m_Player.FindAction("GrabRight", throwIfNotFound: true);
-        m_Player_GrabLeft = m_Player.FindAction("GrabLeft", throwIfNotFound: true);
+        this.m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
+        this.m_Player_Move = this.m_Player.FindAction("Move", throwIfNotFound: true);
+        this.m_Player_Rot = this.m_Player.FindAction("Rot", throwIfNotFound: true);
+        this.m_Player_GrabRight = this.m_Player.FindAction("GrabRight", throwIfNotFound: true);
+        this.m_Player_GrabLeft = this.m_Player.FindAction("GrabLeft", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -163,34 +163,36 @@ public class @PlayerInput : IInputActionCollection, IDisposable
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
-        public PlayerActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Move => m_Wrapper.m_Player_Move;
-        public InputAction @Rot => m_Wrapper.m_Player_Rot;
-        public InputAction @GrabRight => m_Wrapper.m_Player_GrabRight;
-        public InputAction @GrabLeft => m_Wrapper.m_Player_GrabLeft;
-        public InputActionMap Get() { return m_Wrapper.m_Player; }
+        public PlayerActions(@PlayerInput wrapper) {
+            this.m_Wrapper = wrapper; }
+        public InputAction @Move => this.m_Wrapper.m_Player_Move;
+        public InputAction @Rot => this.m_Wrapper.m_Player_Rot;
+        public InputAction @GrabRight => this.m_Wrapper.m_Player_GrabRight;
+        public InputAction @GrabLeft => this.m_Wrapper.m_Player_GrabLeft;
+        public InputActionMap Get() { return this.m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
         public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
         public void SetCallbacks(IPlayerActions instance)
         {
-            if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
+            if (this.m_Wrapper.m_PlayerActionsCallbackInterface != null)
             {
-                @Move.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
-                @Move.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
-                @Move.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
-                @Rot.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
-                @Rot.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
-                @Rot.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
-                @GrabRight.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
-                @GrabRight.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
-                @GrabRight.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
-                @GrabLeft.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
-                @GrabLeft.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
-                @GrabLeft.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
+                @Move.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
+                @Move.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
+                @Move.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
+                @Rot.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
+                @Rot.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
+                @Rot.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
+                @GrabRight.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
+                @GrabRight.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
+                @GrabRight.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
+                @GrabLeft.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
+                @GrabLeft.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
+                @GrabLeft.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
             }
-            m_Wrapper.m_PlayerActionsCallbackInterface = instance;
+
+            this.m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
             {
                 @Move.started += instance.OnMove;

@@ -32,20 +32,20 @@ namespace Test
         private void Start()
         {
             //Setting the min and max rotations based on vector3's.
-            minRot = Quaternion.Euler(-45, 0, 0);
-            maxRot = Quaternion.Euler(-45, 180, 0);
+            this.minRot = Quaternion.Euler(-45, 0, 0);
+            this.maxRot = Quaternion.Euler(-45, 180, 0);
 
             //Setting the levers rotation based on its start active state.
-            if (active == true)
+            if (this.active == true)
             {
-                joint.transform.localRotation = maxRot;
+                this.joint.transform.localRotation = this.maxRot;
             }
             else
             {
-                joint.transform.localRotation = minRot;
+                this.joint.transform.localRotation = this.minRot;
             }
 
-            handel.transform.position = top.transform.position; //Placing the handel on the top.
+            this.handel.transform.position = this.top.transform.position; //Placing the handel on the top.
         }
 
         private void Update()
@@ -59,46 +59,43 @@ namespace Test
 
         private void RotateTowardsHandel() //Rotating the handel.
         {
-            targetTransform.position =
-                handel.transform
+            this.targetTransform.position = this.handel.transform
                     .position; //Due to VR changing the parent of the object being held. Therefor a second transform is used when using localPosition. Matching their global position.
 
             //Making two temp vector3's out of local position values and removing the x value so the lever wont rotate around that axis later in the code.
-            Vector3 tempHandel = targetTransform.localPosition;
+            Vector3 tempHandel = this.targetTransform.localPosition;
             tempHandel.x = 0;
-            Vector3 tempJoint = joint.transform.localPosition;
+            Vector3 tempJoint = this.joint.transform.localPosition;
             tempJoint.x = 0;
 
-            lookDirection =
+            this.lookDirection =
                 tempHandel - tempJoint; //The lookDirection is based on the vector between the joint and the top.
 
-            if (!(lookDirection.y >= minRot.eulerAngles.y)) return; //If the new vector3 is not beyond the min rotation.
+            if (!(this.lookDirection.y >= this.minRot.eulerAngles.y)) return; //If the new vector3 is not beyond the min rotation.
 
-            targetRotation =
-                Quaternion.LookRotation(lookDirection); //The new rotation is made based on the new vector3.
+            this.targetRotation =
+                Quaternion.LookRotation(this.lookDirection); //The new rotation is made based on the new vector3.
 
-            joint.transform.localRotation = targetRotation; //Moving the rotation of the lever.
+            this.joint.transform.localRotation = this.targetRotation; //Moving the rotation of the lever.
 
-            lastHandelPosition = handel.transform.position; //Remembering where the handel were during this rotation.
+            this.lastHandelPosition = this.handel.transform.position; //Remembering where the handel were during this rotation.
 
-            if (targetRotation.y == 0 && targetRotation.z == 0)
+            if (this.targetRotation.y == 0 && this.targetRotation.z == 0)
             {
-                if (targetRotation.eulerAngles.x > minRot.eulerAngles.x)
-                    joint.transform.localRotation =
-                        minRot; //If the new rotation is beyond the min rotation then it is returned to the min rotation.
+                if (this.targetRotation.eulerAngles.x > this.minRot.eulerAngles.x)
+                    this.joint.transform.localRotation = this.minRot; //If the new rotation is beyond the min rotation then it is returned to the min rotation.
             }
-            else if (targetRotation.x == 0 && targetRotation.w == 0)
+            else if (this.targetRotation.x == 0 && this.targetRotation.w == 0)
             {
-                if (targetRotation.eulerAngles.x > maxRot.eulerAngles.x)
-                    joint.transform.localRotation =
-                        maxRot; //If the new rotation is beyond the max rotation then it is returned to the max rotation.
+                if (this.targetRotation.eulerAngles.x > this.maxRot.eulerAngles.x)
+                    this.joint.transform.localRotation = this.maxRot; //If the new rotation is beyond the max rotation then it is returned to the max rotation.
             }
         }
 
         private void CountPercent() //Counting the placement of the lever between the min and max rotation.
         {
             float tempPercent;
-            Quaternion tempRot = joint.transform.localRotation;
+            Quaternion tempRot = this.joint.transform.localRotation;
 
             //Getting the angel of the lever.
             if (tempRot.eulerAngles.y != 0)
@@ -116,22 +113,20 @@ namespace Test
                 tempPercent = 100;
 
             //Getting the closest highest int number to the current procent. 100 -> 100, 23,4 -> 24.
-            progressInProcent =
+            this.progressInProcent =
                 Mathf.Ceil(tempPercent);
         }
 
         private void IsActiveOrNot() //Check when the lever is active.
         {
-            if (progressInProcent <= 50)
-                active = false;
-            else if (progressInProcent > 50)
-                active = true;
+            if (this.progressInProcent <= 50)
+                this.active = false;
+            else if (this.progressInProcent > 50) this.active = true;
         }
 
         private void LockHandelTransform() //Locking the handel position to the top position.
         {
-            if (lockHandel) 
-                handel.transform.position = top.transform.position;
+            if (this.lockHandel) this.handel.transform.position = this.top.transform.position;
         }
     }
 }

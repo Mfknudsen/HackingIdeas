@@ -28,8 +28,8 @@ namespace Idea_2
         {
             base.Start();
 
-            speed = Random.Range(5, 10);
-            speed *= Random.Range(0f, 1f) < .5f ? -1 : 1;
+            this.speed = Random.Range(5, 10);
+            this.speed *= Random.Range(0f, 1f) < .5f ? -1 : 1;
         }
 
         private void Update()
@@ -63,7 +63,7 @@ namespace Idea_2
             }
 
             if (!this.inserted && !this.grabbed)
-                transform.Rotate(transform.up, speed * Time.deltaTime);
+                transform.Rotate(transform.up, this.speed * Time.deltaTime);
         }
 
         protected override void OnGrab()
@@ -103,7 +103,7 @@ namespace Idea_2
         };
 
         protected Vector3 RightDir() =>
-            this.inputBoard.gridTransforms[1][0].position - inputBoard.gridTransforms[0][0].position;
+            this.inputBoard.gridTransforms[1][0].position - this.inputBoard.gridTransforms[0][0].position;
 
         protected Vector3 UpDir() =>
             this.inputBoard.gridTransforms[0][1].position - this.inputBoard.gridTransforms[0][0].position;

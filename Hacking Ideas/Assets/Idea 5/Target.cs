@@ -43,9 +43,9 @@ namespace Idea_5
         {
             Transform t = transform;
             t.position += this.moveDir * (this.speed * Time.deltaTime);
-            t.LookAt(playerPos);
+            t.LookAt(this.playerPos);
 
-            if (Vector3.Distance(t.position, playerPos) > 1.35f) return;
+            if (Vector3.Distance(t.position, this.playerPos) > 1.35f) return;
 
             if (!this.danger)
                 ChangePoints(-1);

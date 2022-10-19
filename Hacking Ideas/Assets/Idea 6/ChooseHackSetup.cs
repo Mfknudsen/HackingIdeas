@@ -83,11 +83,11 @@ namespace Idea_6
             }
             else
             {
-                currentWrong++;
+                this.currentWrong++;
                 this.questionText.text = "Wrong: " + this.currentWrong;
             }
 
-            StopCoroutine(currentCoroutine);
+            StopCoroutine(this.currentCoroutine);
 
             if (this.currentCorrect < this.goal && this.currentWrong < this.maxMissed)
             {

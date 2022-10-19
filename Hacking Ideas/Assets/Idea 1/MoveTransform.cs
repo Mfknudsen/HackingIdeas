@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace Idea_1
 {
+    /// <summary>
+    /// Used for controlling the direction of the key on the line.
+    /// In game it is an arrow.
+    /// </summary>
     public class MoveTransform : MonoBehaviour
     {
         #region Values
@@ -10,11 +14,16 @@ namespace Idea_1
 
         #endregion
 
+        /// <summary>
+        /// Updates the arrows position and rotation.
+        /// </summary>
         private void Update()
         {
-            transform.position = this.rightHand.position + this.rightHand.forward * .25f;
+            Transform moveTransform = transform;
+            Vector3 handForward = this.rightHand.forward;
+            moveTransform.position = this.rightHand.position + handForward * .25f;
 
-            transform.LookAt(transform.position + this.rightHand.forward, this.rightHand.up);
+            transform.LookAt(moveTransform.position + handForward, this.rightHand.up);
         }
     }
 }

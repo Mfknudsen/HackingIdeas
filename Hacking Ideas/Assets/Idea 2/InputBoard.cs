@@ -40,9 +40,9 @@ namespace Idea_2
 
         private void OnValidate()
         {
-            gridSize = new Vector2Int(
-                Mathf.Clamp(gridSize.x, 2, 100),
-                Mathf.Clamp(gridSize.y, 2, 100)
+            this.gridSize = new Vector2Int(
+                Mathf.Clamp(this.gridSize.x, 2, 100),
+                Mathf.Clamp(this.gridSize.y, 2, 100)
             );
         }
 
@@ -76,11 +76,11 @@ namespace Idea_2
                     obj.name = "Square + " + x + "-" + y;
 
                     Transform oTransform = obj.transform;
-                    Vector3 tempScale = oTransform.localScale * sizeScale;
+                    Vector3 tempScale = oTransform.localScale * this.sizeScale;
                     float localSize = tempScale.x * 10;
                     oTransform.localScale = tempScale;
 
-                    gridTransforms[x].Set(y, oTransform);
+                    this.gridTransforms[x].Set(y, oTransform);
 
                     Vector3 objPosition = startPos;
                     Vector3 forward = t.forward, right = t.right;
@@ -257,7 +257,7 @@ namespace Idea_2
                     //TryCatch to stop error message
                 }
 
-                GameObject o = Instantiate(explosionParticle);
+                GameObject o = Instantiate(this.explosionParticle);
                 o.transform.position = g.transform.position;
                 ParticleSystem.MainModule main = o.GetComponent<ParticleSystem>().main;
                 main.startColor = g == key ? Color.black : Color.white;
@@ -268,7 +268,7 @@ namespace Idea_2
             foreach (Blocker b in transform.parent.GetComponentsInChildren<Blocker>())
                 b.Reset();
 
-            foreach (InputBlock inputBlock in gridBlocks.SelectMany(b => b.list).Where(b => b != null))
+            foreach (InputBlock inputBlock in this.gridBlocks.SelectMany(b => b.list).Where(b => b != null))
                 inputBlock.Reset();
         }
     }
@@ -280,20 +280,20 @@ namespace Idea_2
 
         public Storage(int size)
         {
-            list = new List<T>();
+            this.list = new List<T>();
             for (int i = 0; i < size; i++)
             {
-                list.Add(default);
+                this.list.Add(default);
             }
         }
 
-        public T this[int index] => list[index];
+        public T this[int index] => this.list[index];
 
         public void Set(int index, T set)
         {
-            list[index] = set;
+            this.list[index] = set;
         }
 
-        public int Count => list.Count;
+        public int Count => this.list.Count;
     }
 }

@@ -23,16 +23,14 @@ namespace Idea_4
 
         private void Update()
         {
-            if (done) return;
+            if (this.done) return;
 
             if (this.pointTransforms[0].position.Equals(this.points[0])) return;
 
             int diffIndex = this.pointTransforms.Count - this.points.Count;
-            for (int i = 0; i < this.points.Count; i++)
-                points[i] = pointTransforms[i + diffIndex].position;
+            for (int i = 0; i < this.points.Count; i++) this.points[i] = this.pointTransforms[i + diffIndex].position;
 
-            for (int i = 0; i < this.points.Count; i++)
-                lineRenderer.SetPosition(i, this.points[i] + (this.points[i] - transform.position).normalized * .002f);
+            for (int i = 0; i < this.points.Count; i++) this.lineRenderer.SetPosition(i, this.points[i] + (this.points[i] - transform.position).normalized * .002f);
             this.indicator.transform.LookAt(this.startPoint + (transform.position - this.startPoint));
 
             this.indicator.transform.position = this.points[this.currentIndex];

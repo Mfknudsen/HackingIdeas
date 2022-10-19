@@ -14,7 +14,7 @@ namespace Idea_2
 
         private Vector2Int originID;
 
-        private void Move(Vector2Int newID) => inputBoard.Trigger(this, newID);
+        private void Move(Vector2Int newID) => this.inputBoard.Trigger(this, newID);
 
         public void TriggerFirst()
         {

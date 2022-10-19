@@ -10,14 +10,14 @@ namespace Idea_2.Blockers
         public override IEnumerator Trigger(GridKey key, float timePerBlock,
             InputBoard inputBoard)
         {
-            key.transform.position = this.inputBoard.gridTransforms[id.x][id.y].position;
+            key.transform.position = this.inputBoard.gridTransforms[this.id.x][this.id.y].position;
             
             PlaceDirection switchedDir = this.placeDirection switch
             {
-                PlaceDirection.PlusX => switched ? PlaceDirection.MinusX : PlaceDirection.PlusX,
-                PlaceDirection.MinusX => switched ? PlaceDirection.PlusX : PlaceDirection.MinusX,
-                PlaceDirection.PlusY => switched ? PlaceDirection.MinusY : PlaceDirection.PlusY,
-                _ => switched ? PlaceDirection.PlusY : PlaceDirection.MinusY,
+                PlaceDirection.PlusX => this.switched ? PlaceDirection.MinusX : PlaceDirection.PlusX,
+                PlaceDirection.MinusX => this.switched ? PlaceDirection.PlusX : PlaceDirection.MinusX,
+                PlaceDirection.PlusY => this.switched ? PlaceDirection.MinusY : PlaceDirection.PlusY,
+                _ => this.switched ? PlaceDirection.PlusY : PlaceDirection.MinusY,
             };
 
             Vector2Int keyDir = switchedDir switch
@@ -28,7 +28,7 @@ namespace Idea_2.Blockers
                 _ => new Vector2Int(0, 1)
             };
 
-            switched = !switched;
+            this.switched = !this.switched;
 
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + keyDir.x, this.id.y + keyDir.y);
@@ -44,7 +44,7 @@ namespace Idea_2.Blockers
                 yield return null;
             }
 
-            key.previousDirection = placeDirection;
+            key.previousDirection = this.placeDirection;
             Transform trans = transform;
             transform.LookAt(trans.position - trans.forward, trans.up);
 
@@ -53,10 +53,10 @@ namespace Idea_2.Blockers
 
         public override void Reset()
         {
-            if (!switched)
+            if (!this.switched)
                 return;
 
-            switched = false;
+            this.switched = false;
 
             Transform trans = transform;
             trans.LookAt(trans.position - trans.forward, trans.up);

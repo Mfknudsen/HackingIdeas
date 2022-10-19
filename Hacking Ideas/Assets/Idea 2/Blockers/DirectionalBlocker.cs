@@ -51,7 +51,7 @@ namespace Idea_2.Blockers
                 yield return null;
             }
 
-            key.previousDirection = placeDirection;
+            key.previousDirection = this.placeDirection;
 
             inputBoard.Trigger(key, idToMoveTo);
         }

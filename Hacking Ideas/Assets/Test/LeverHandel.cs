@@ -17,15 +17,15 @@ namespace Test
         protected override void Start()
         {
             base.Start();
-            
-            parentOfObject = transform.parent; //Get the parent transform.
+
+            this.parentOfObject = transform.parent; //Get the parent transform.
         }
 
         protected override void OnRelease() //When no longer being held.
         {
-            transform.position = toReturnTo.position; //Return to the top of the lever.
+            transform.position = this.toReturnTo.position; //Return to the top of the lever.
 
-            transform.SetParent(parentOfObject); //Return af a child to the original parent.
+            transform.SetParent(this.parentOfObject); //Return af a child to the original parent.
         }
 
         protected override void OnGrab()
