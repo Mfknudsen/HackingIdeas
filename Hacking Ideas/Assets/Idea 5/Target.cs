@@ -24,7 +24,7 @@ namespace Idea_5
             yield return new WaitForSeconds(this.life - this.fadeTime);
 
             float t = 0;
-            Renderer r = GetComponent<Renderer>();
+            Renderer r = this.GetComponent<Renderer>();
             while (t < this.fadeTime)
             {
                 r.material.SetColor(ColorID, this.color * new Color(1, 1, 1, 1 - t));
@@ -33,52 +33,50 @@ namespace Idea_5
                 yield return null;
             }
 
-            if (!this.danger)
-                ChangePoints(-1);
+            if (!this.danger) this.ChangePoints(-1);
             
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
 
         private void Update()
         {
-            Transform t = transform;
+            Transform t = this.transform;
             t.position += this.moveDir * (this.speed * Time.deltaTime);
             t.LookAt(this.playerPos);
 
             if (Vector3.Distance(t.position, this.playerPos) > 1.35f) return;
 
-            if (!this.danger)
-                ChangePoints(-1);
+            if (!this.danger) this.ChangePoints(-1);
 
             ParticleSystem particle = Instantiate(this.particlePrefab).GetComponent<ParticleSystem>();
             particle.transform.position = t.position;
             ParticleSystem.MainModule particleSystemMain = particle.main;
             particleSystemMain.startColor = this.color;
 
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
 
         public void Hit(Color c)
         {
             if (this.bonus)
             {
-                ChangePoints(5);
+                this.ChangePoints(5);
 
-                Destroy(gameObject);
+                Destroy(this.gameObject);
                 return;
             }
 
             if (!this.color.Equals(c) && !this.danger) return;
 
-            ChangePoints(this.danger ? -1 : 1);
+            this.ChangePoints(this.danger ? -1 : 1);
 
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
 
         private void ChangePoints(int change)
         {
             GameObject obj = Instantiate(this.pointDisplay);
-            Transform t = transform;
+            Transform t = this.transform;
             obj.transform.position = t.position;
             obj.transform.LookAt(obj.transform.position - t.forward);
             obj.GetComponent<TextMeshPro>().text = (change > 0 ? "+" : "-") +

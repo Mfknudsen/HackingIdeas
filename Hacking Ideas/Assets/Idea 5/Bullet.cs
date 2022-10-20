@@ -12,26 +12,26 @@ namespace Idea_5
 
         private void Update()
         {
-            Transform t = transform;
+            Transform t = this.transform;
             t.position += t.forward * (this.speed * Time.deltaTime);
 
             this.currentLife += Time.deltaTime;
 
             if (this.currentLife > 10)
-                Destroy(gameObject);
+                Destroy(this.gameObject);
         }
 
         private void OnCollisionEnter(Collision collision)
         {
             ParticleSystem system = Instantiate(this.particlePrefab).GetComponent<ParticleSystem>();
-            system.transform.position = transform.position;
+            system.transform.position = this.transform.position;
             ParticleSystem.MainModule main = system.main;
             main.startColor = this.color;
 
             if (collision.gameObject.GetComponent<Target>() is { } target)
                 target.Hit(this.color);
 
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
     }
 }

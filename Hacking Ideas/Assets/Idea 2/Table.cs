@@ -14,7 +14,7 @@ namespace Idea_2
         {
             GameObject obj = Instantiate(this.toSpawn);
 
-            Transform trans = transform;
+            Transform trans = this.transform;
             Transform t = obj.transform;
             t.position += trans.position + Vector3.up * .25f;
             t.LookAt(Vector3.forward, Vector3.up);
@@ -31,7 +31,7 @@ namespace Idea_2
 
         private void Update()
         {
-            SpawnNew();
+            this.SpawnNew();
         }
 
         private void SpawnNew()
@@ -41,13 +41,13 @@ namespace Idea_2
                 if (!this.spawning)
                     return;
 
-                if (Vector3.Distance(this.holding.transform.position, transform.position + Vector3.up * .25f) < .2f)
+                if (Vector3.Distance(this.holding.transform.position, this.transform.position + Vector3.up * .25f) < .2f)
                     return;
             }
 
             GameObject obj = Instantiate(this.toSpawn);
 
-            Transform t = transform;
+            Transform t = this.transform;
             Transform objTransform = obj.transform;
             objTransform.position += t.position + Vector3.up * .25f;
             objTransform.LookAt(Vector3.forward, Vector3.up);

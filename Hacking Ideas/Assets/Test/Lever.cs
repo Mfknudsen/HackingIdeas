@@ -51,10 +51,10 @@ namespace Test
         private void Update()
         {
             //Updating the different parts of the script.
-            RotateTowardsHandel();
-            CountPercent();
-            IsActiveOrNot();
-            LockHandelTransform();
+            this.RotateTowardsHandel();
+            this.CountPercent();
+            this.IsActiveOrNot();
+            this.LockHandelTransform();
         }
 
         private void RotateTowardsHandel() //Rotating the handel.

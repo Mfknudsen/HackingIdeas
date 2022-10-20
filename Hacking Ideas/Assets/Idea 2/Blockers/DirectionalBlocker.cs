@@ -3,10 +3,13 @@ using UnityEngine;
 
 namespace Idea_2.Blockers
 {
+    /// <summary>
+    /// Blocking keys coming from a specific direction else let it move past.
+    /// </summary>
     public class DirectionalBlocker : Blocker
     {
         public override IEnumerator Trigger(GridKey key, float timePerBlock,
-            InputBoard inputBoard)
+            InputBoard board)
         {
             key.transform.position = this.inputBoard.gridTransforms[this.id.x][this.id.y].position;
 
@@ -39,7 +42,7 @@ namespace Idea_2.Blockers
 
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + keyDir.x, this.id.y + keyDir.y);
-            Vector3 dir = UpDir() * keyDir.y + RightDir() * keyDir.x;
+            Vector3 dir = this.UpDir() * keyDir.y + this.RightDir() * keyDir.x;
 
 
             while (t < timePerBlock)
@@ -53,7 +56,7 @@ namespace Idea_2.Blockers
 
             key.previousDirection = this.placeDirection;
 
-            inputBoard.Trigger(key, idToMoveTo);
+            board.Trigger(key, idToMoveTo);
         }
     }
 }

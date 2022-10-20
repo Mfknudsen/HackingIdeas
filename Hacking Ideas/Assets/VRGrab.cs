@@ -42,12 +42,12 @@ public class VRGrab : MonoBehaviour
         if (grib > this.threshold && !this.grabbing)
         {
             this.grabbing = true;
-            Grab();
+            this.Grab();
         }
         else if (grib < this.threshold && this.grabbing)
         {
             this.grabbing = false;
-            Release();
+            this.Release();
         }
     }
 
@@ -70,7 +70,7 @@ public class VRGrab : MonoBehaviour
         if (this.objectsInRange.Count == 0)
             return;
 
-        Vector3 pos = transform.position;
+        Vector3 pos = this.transform.position;
 
         this.holdingObj = this.objectsInRange
             .Where(o => o != null)
@@ -82,7 +82,7 @@ public class VRGrab : MonoBehaviour
 
         if (this.holdingObj.GetComponentInParent<VRGrab>() is { } g && g != this) g.holdingObj = null;
 
-        this.holdingObj.Grab(transform);
+        this.holdingObj.Grab(this.transform);
     }
 
     private void Release()

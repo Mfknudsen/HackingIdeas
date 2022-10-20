@@ -46,8 +46,7 @@ namespace Idea_1
         /// <summary>
         /// Resets it's position and rotation.
         /// </summary>
-        private void Start() =>
-            ResetStartPosition();
+        private void Start() => this.ResetStartPosition();
 
         /// <summary>
         /// Get the input and move the key.
@@ -64,7 +63,7 @@ namespace Idea_1
 
             if (this.setup.playerControls == Controls.V1)
             {
-                Transform keyTransform = transform;
+                Transform keyTransform = this.transform;
                 keyTransform.position += keyTransform.forward * (dir * this.speed * Time.deltaTime);
             }
 
@@ -88,8 +87,8 @@ namespace Idea_1
             //Check if the new line is the end.
             if (set is EndLine)
             {
-                transform.position = set.front;
-                enabled = false;
+                this.transform.position = set.front;
+                this.enabled = false;
                 return;
             }
 
@@ -103,7 +102,7 @@ namespace Idea_1
                 set.splitIndex = 0;
                 set.onSplitPath = false;
 
-                transform.position = set.calculatedPath[set.index];
+                this.transform.position = set.calculatedPath[set.index];
 
                 this.currentLine = set;
 
@@ -116,7 +115,7 @@ namespace Idea_1
                 set.index = set.crossIndex;
                 set.onSplitPath = true;
 
-                transform.position = set.splitCalculatedPath[set.splitIndex];
+                this.transform.position = set.splitCalculatedPath[set.splitIndex];
 
                 this.facingHigherIndexPoint = dir < 0;
 
@@ -139,11 +138,11 @@ namespace Idea_1
         /// </summary>
         public void ResetStartPosition()
         {
-            this.currentLine = transform.parent.GetComponent<HackLinesSetup>().GetRootLine();
+            this.currentLine = this.transform.parent.GetComponent<HackLinesSetup>().GetRootLine();
 
             int i = Mathf.FloorToInt(this.currentLine.calculatedPath.Length / 2f);
-            transform.position = this.currentLine.calculatedPath[i];
-            transform.LookAt(this.currentLine.calculatedPath[i + 1]);
+            this.transform.position = this.currentLine.calculatedPath[i];
+            this.transform.LookAt(this.currentLine.calculatedPath[i + 1]);
 
             this.currentLine.index = i;
 

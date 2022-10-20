@@ -31,7 +31,7 @@ namespace Idea_5
 
         private void Start()
         {
-            this.spawner = StartCoroutine(SpawnTargets());
+            this.spawner = this.StartCoroutine(this.SpawnTargets());
 
             foreach (Shooter shooter in FindObjectsOfType<Shooter>())
             {
@@ -51,7 +51,7 @@ namespace Idea_5
 
             if (this.hits < this.goal && this.hits > 0) return;
 
-            foreach (Target c in GetComponentsInChildren<Target>())
+            foreach (Target c in this.GetComponentsInChildren<Target>())
             {
                 ParticleSystem particle = Instantiate(this.particlePrefab).GetComponent<ParticleSystem>();
                 particle.transform.position = c.transform.position;
@@ -61,12 +61,12 @@ namespace Idea_5
                 Destroy(c.gameObject);
             }
 
-            StopCoroutine(this.spawner);
+            this.StopCoroutine(this.spawner);
 
             this.textMeshPro.text = this.hits >= this.goal ? "Victory" : "Defeat";
         }
 
-        private void OnDestroy() => StopCoroutine(this.spawner);
+        private void OnDestroy() => this.StopCoroutine(this.spawner);
 
         private IEnumerator SpawnTargets()
         {
@@ -78,7 +78,7 @@ namespace Idea_5
 
                 if (this.spawnAgainstPlayer)
                 {
-                    GameObject obj = Instantiate(this.targetPrefab, transform);
+                    GameObject obj = Instantiate(this.targetPrefab, this.transform);
 
                     Vector3 dir = Vector3.right * Random.Range(-.75f, .75f) +
                                   Vector3.up * Random.Range(0, .55f) +
@@ -107,7 +107,7 @@ namespace Idea_5
                 }
                 else
                 {
-                    GameObject obj = Instantiate(this.targetPrefab, transform);
+                    GameObject obj = Instantiate(this.targetPrefab, this.transform);
 
                     Vector3 dir = Vector3.right * Random.Range(-.55f, .55f) +
                                   Vector3.up * Random.Range(0, .35f) +

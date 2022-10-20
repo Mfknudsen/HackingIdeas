@@ -3,12 +3,16 @@ using UnityEngine;
 
 namespace Idea_2.Blockers
 {
+    /// <summary>
+    /// Moves the key a direction by one then switch direction to the opposite.
+    /// Repeats everytime a key triggers it. 
+    /// </summary>
     public class SwitchBlocker : Blocker
     {
         private bool switched;
 
         public override IEnumerator Trigger(GridKey key, float timePerBlock,
-            InputBoard inputBoard)
+            InputBoard board)
         {
             key.transform.position = this.inputBoard.gridTransforms[this.id.x][this.id.y].position;
             
@@ -32,7 +36,7 @@ namespace Idea_2.Blockers
 
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + keyDir.x, this.id.y + keyDir.y);
-            Vector3 dir = UpDir() * keyDir.y + RightDir() * keyDir.x;
+            Vector3 dir = this.UpDir() * keyDir.y + this.RightDir() * keyDir.x;
 
 
             while (t < timePerBlock)
@@ -45,10 +49,10 @@ namespace Idea_2.Blockers
             }
 
             key.previousDirection = this.placeDirection;
-            Transform trans = transform;
-            transform.LookAt(trans.position - trans.forward, trans.up);
+            Transform trans = this.transform;
+            this.transform.LookAt(trans.position - trans.forward, trans.up);
 
-            inputBoard.Trigger(key, idToMoveTo);
+            board.Trigger(key, idToMoveTo);
         }
 
         public override void Reset()
@@ -58,7 +62,7 @@ namespace Idea_2.Blockers
 
             this.switched = false;
 
-            Transform trans = transform;
+            Transform trans = this.transform;
             trans.LookAt(trans.position - trans.forward, trans.up);
         }
     }

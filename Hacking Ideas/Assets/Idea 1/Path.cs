@@ -29,22 +29,21 @@ namespace Idea_1
             this.points.Add((this.points[this.points.Count - 1] + anchorPos) * .5f);
             this.points.Add(anchorPos);
 
-            if (this.autoSetControlPoints)
-                AutoSetAllAffectedControlPoints(this.points.Count - 1);
+            if (this.autoSetControlPoints) this.AutoSetAllAffectedControlPoints(this.points.Count - 1);
         }
 
         public void SplitSegment(Vector3 anchorPos, int segmentIndex)
         {
             this.points.InsertRange(segmentIndex * 3 + 2, new[] { Vector3.zero, anchorPos, Vector3.zero });
             if (this.autoSetControlPoints)
-                AutoSetAllAffectedControlPoints(segmentIndex * 3 + 3);
+                this.AutoSetAllAffectedControlPoints(segmentIndex * 3 + 3);
             else
-                AutoSetAnchorControlPoints(segmentIndex * 3 + 3);
+                this.AutoSetAnchorControlPoints(segmentIndex * 3 + 3);
         }
 
         public void DeleteSegment(int anchorIndex)
         {
-            if (NumSegments <= 2 && (this.isClosed || NumSegments <= 1)) return;
+            if (this.NumSegments <= 2 && (this.isClosed || this.NumSegments <= 1)) return;
             
             if (anchorIndex == 0)
             {
@@ -59,7 +58,7 @@ namespace Idea_1
         }
 
         public Vector3[] GetPointsInSegment(int i) => new[]
-            { this.points[i * 3], this.points[i * 3 + 1],this. points[i * 3 + 2], this.points[LoopIndex(i * 3 + 3)] };
+            { this.points[i * 3], this.points[i * 3 + 1],this. points[i * 3 + 2], this.points[this.LoopIndex(i * 3 + 3)] };
 
         public void MovePoint(int i, Vector3 pos)
         {
@@ -70,16 +69,16 @@ namespace Idea_1
                 this.points[i] = pos;
 
                 if (this.autoSetControlPoints)
-                    AutoSetAllAffectedControlPoints(i);
+                    this.AutoSetAllAffectedControlPoints(i);
                 else
                 {
                     if (i % 3 == 0)
                     {
                         if (i + 1 < this.points.Count || this.isClosed)
-                            this.points[LoopIndex(i + 1)] += deltaMove;
+                            this.points[this.LoopIndex(i + 1)] += deltaMove;
 
                         if (i - 1 >= 0 || this.isClosed)
-                            this.points[LoopIndex(i - 1)] += deltaMove;
+                            this.points[this.LoopIndex(i - 1)] += deltaMove;
                     }
                     else
                     {
@@ -89,10 +88,10 @@ namespace Idea_1
 
                         if (correspondingControlIndex >= 0 && correspondingControlIndex < this.points.Count || this.isClosed)
                         {
-                            float dst = (this.points[LoopIndex(anchorIndex)] - this.points[LoopIndex(correspondingControlIndex)])
+                            float dst = (this.points[this.LoopIndex(anchorIndex)] - this.points[this.LoopIndex(correspondingControlIndex)])
                                 .magnitude;
-                            Vector3 dir = (this.points[LoopIndex(anchorIndex)] - pos).normalized;
-                            this.points[LoopIndex(correspondingControlIndex)] = this.points[LoopIndex(anchorIndex)] + dir * dst;
+                            Vector3 dir = (this.points[this.LoopIndex(anchorIndex)] - pos).normalized;
+                            this.points[this.LoopIndex(correspondingControlIndex)] = this.points[this.LoopIndex(anchorIndex)] + dir * dst;
                         }
                     }
                 }
@@ -106,9 +105,9 @@ namespace Idea_1
             Vector3 previousPoint = this.points[0];
             float dstSinceLastEvenPoint = 0;
 
-            for (int segmentIndex = 0; segmentIndex < NumSegments; segmentIndex++)
+            for (int segmentIndex = 0; segmentIndex < this.NumSegments; segmentIndex++)
             {
-                Vector3[] p = GetPointsInSegment(segmentIndex);
+                Vector3[] p = this.GetPointsInSegment(segmentIndex);
                 float controlNetLength = Vector3.Distance(p[0], p[1]) + Vector3.Distance(p[1], p[2]) +
                                          Vector3.Distance(p[2], p[3]);
                 float estimatedCurveLength = Vector3.Distance(p[0], p[3]) + controlNetLength / 2f;
@@ -141,19 +140,17 @@ namespace Idea_1
         {
             for (int i = updatedAnchorIndex - 3; i <= updatedAnchorIndex + 3; i += 3)
             {
-                if (i >= 0 && i < this.points.Count || this.isClosed)
-                    AutoSetAnchorControlPoints(LoopIndex(i));
+                if (i >= 0 && i < this.points.Count || this.isClosed) this.AutoSetAnchorControlPoints(this.LoopIndex(i));
             }
 
-            AutoSetStartAndEndControls();
+            this.AutoSetStartAndEndControls();
         }
 
         private void AutoSetAllControlPoints()
         {
-            for (int i = 0; i < this.points.Count; i += 3)
-                AutoSetAnchorControlPoints(i);
+            for (int i = 0; i < this.points.Count; i += 3) this.AutoSetAnchorControlPoints(i);
 
-            AutoSetStartAndEndControls();
+            this.AutoSetStartAndEndControls();
         }
 
         private void AutoSetAnchorControlPoints(int anchorIndex)
@@ -164,14 +161,14 @@ namespace Idea_1
 
             if (anchorIndex - 3 >= 0 || this.isClosed)
             {
-                Vector3 offset = this.points[LoopIndex(anchorIndex - 3)] - anchorPos;
+                Vector3 offset = this.points[this.LoopIndex(anchorIndex - 3)] - anchorPos;
                 dir += offset.normalized;
                 neighbourDistances[0] = offset.magnitude;
             }
 
             if (anchorIndex + 3 >= 0 || this.isClosed)
             {
-                Vector3 offset = this.points[LoopIndex(anchorIndex + 3)] - anchorPos;
+                Vector3 offset = this.points[this.LoopIndex(anchorIndex + 3)] - anchorPos;
                 dir -= offset.normalized;
                 neighbourDistances[1] = -offset.magnitude;
             }
@@ -183,7 +180,7 @@ namespace Idea_1
                 int controlIndex = anchorIndex + i * 2 - 1;
 
                 if (controlIndex >= 0 && controlIndex < this.points.Count || this.isClosed)
-                    this.points[LoopIndex(controlIndex)] = anchorPos + dir * (neighbourDistances[i] * .5f);
+                    this.points[this.LoopIndex(controlIndex)] = anchorPos + dir * (neighbourDistances[i] * .5f);
             }
         }
 

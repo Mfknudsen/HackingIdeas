@@ -17,18 +17,18 @@ namespace Idea_3
         {
             base.Start();
 
-            this.spawnPoint = transform.position;
+            this.spawnPoint = this.transform.position;
         }
 
         private void Update()
         {
             if (this.grabbed) return;
 
-            Transform t = transform;
+            Transform t = this.transform;
             t.position += t.forward * (this.speed * Time.deltaTime);
 
             if (Mathf.Abs(t.position.y - this.spawnPoint.y) > 1.2f)
-                Destroy(gameObject);
+                Destroy(this.gameObject);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -52,11 +52,11 @@ namespace Idea_3
 
         protected override void OnRelease()
         {
-            transform.LookAt(transform.position - Vector3.up);
+            this.transform.LookAt(this.transform.position - Vector3.up);
 
             if (this.closeMouths.Count == 0) return;
 
-            Vector3 pos = transform.position;
+            Vector3 pos = this.transform.position;
 
             Mouth m = this.closeMouths.OrderBy(m => Vector3.Distance(m.transform.position, pos)).First();
 
@@ -70,13 +70,13 @@ namespace Idea_3
                 m.Eat(this);
             }
 
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
 
         public void SetColor(Color c)
         {
             this.color = c;
-            foreach (Renderer r in GetComponentsInChildren<Renderer>())
+            foreach (Renderer r in this.GetComponentsInChildren<Renderer>())
             {
                 Material mat = r.material;
                 mat.EnableKeyword("_Color");

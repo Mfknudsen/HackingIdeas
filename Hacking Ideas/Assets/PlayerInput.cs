@@ -11,7 +11,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
     public InputActionAsset asset { get; }
     public @PlayerInput()
     {
-        asset = InputActionAsset.FromJson(@"{
+        this.asset = InputActionAsset.FromJson(@"{
     ""name"": ""PlayerInput"",
     ""maps"": [
         {
@@ -102,7 +102,7 @@ public class @PlayerInput : IInputActionCollection, IDisposable
     ""controlSchemes"": []
 }");
         // Player
-        this.m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
+        this.m_Player = this.asset.FindActionMap("Player", throwIfNotFound: true);
         this.m_Player_Move = this.m_Player.FindAction("Move", throwIfNotFound: true);
         this.m_Player_Rot = this.m_Player.FindAction("Rot", throwIfNotFound: true);
         this.m_Player_GrabRight = this.m_Player.FindAction("GrabRight", throwIfNotFound: true);
@@ -111,46 +111,46 @@ public class @PlayerInput : IInputActionCollection, IDisposable
 
     public void Dispose()
     {
-        UnityEngine.Object.Destroy(asset);
+        UnityEngine.Object.Destroy(this.asset);
     }
 
     public InputBinding? bindingMask
     {
-        get => asset.bindingMask;
-        set => asset.bindingMask = value;
+        get => this.asset.bindingMask;
+        set => this.asset.bindingMask = value;
     }
 
     public ReadOnlyArray<InputDevice>? devices
     {
-        get => asset.devices;
-        set => asset.devices = value;
+        get => this.asset.devices;
+        set => this.asset.devices = value;
     }
 
-    public ReadOnlyArray<InputControlScheme> controlSchemes => asset.controlSchemes;
+    public ReadOnlyArray<InputControlScheme> controlSchemes => this.asset.controlSchemes;
 
     public bool Contains(InputAction action)
     {
-        return asset.Contains(action);
+        return this.asset.Contains(action);
     }
 
     public IEnumerator<InputAction> GetEnumerator()
     {
-        return asset.GetEnumerator();
+        return this.asset.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return GetEnumerator();
+        return this.GetEnumerator();
     }
 
     public void Enable()
     {
-        asset.Enable();
+        this.asset.Enable();
     }
 
     public void Disable()
     {
-        asset.Disable();
+        this.asset.Disable();
     }
 
     // Player
@@ -170,43 +170,45 @@ public class @PlayerInput : IInputActionCollection, IDisposable
         public InputAction @GrabRight => this.m_Wrapper.m_Player_GrabRight;
         public InputAction @GrabLeft => this.m_Wrapper.m_Player_GrabLeft;
         public InputActionMap Get() { return this.m_Wrapper.m_Player; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
+        public void Enable() {
+            this.Get().Enable(); }
+        public void Disable() {
+            this.Get().Disable(); }
+        public bool enabled => this.Get().enabled;
         public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
         public void SetCallbacks(IPlayerActions instance)
         {
             if (this.m_Wrapper.m_PlayerActionsCallbackInterface != null)
             {
-                @Move.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
-                @Move.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
-                @Move.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
-                @Rot.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
-                @Rot.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
-                @Rot.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
-                @GrabRight.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
-                @GrabRight.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
-                @GrabRight.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
-                @GrabLeft.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
-                @GrabLeft.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
-                @GrabLeft.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
+                this.@Move.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
+                this.@Move.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
+                this.@Move.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
+                this.@Rot.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
+                this.@Rot.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
+                this.@Rot.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnRot;
+                this.@GrabRight.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
+                this.@GrabRight.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
+                this.@GrabRight.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabRight;
+                this.@GrabLeft.started -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
+                this.@GrabLeft.performed -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
+                this.@GrabLeft.canceled -= this.m_Wrapper.m_PlayerActionsCallbackInterface.OnGrabLeft;
             }
 
             this.m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Move.started += instance.OnMove;
-                @Move.performed += instance.OnMove;
-                @Move.canceled += instance.OnMove;
-                @Rot.started += instance.OnRot;
-                @Rot.performed += instance.OnRot;
-                @Rot.canceled += instance.OnRot;
-                @GrabRight.started += instance.OnGrabRight;
-                @GrabRight.performed += instance.OnGrabRight;
-                @GrabRight.canceled += instance.OnGrabRight;
-                @GrabLeft.started += instance.OnGrabLeft;
-                @GrabLeft.performed += instance.OnGrabLeft;
-                @GrabLeft.canceled += instance.OnGrabLeft;
+                this.@Move.started += instance.OnMove;
+                this.@Move.performed += instance.OnMove;
+                this.@Move.canceled += instance.OnMove;
+                this.@Rot.started += instance.OnRot;
+                this.@Rot.performed += instance.OnRot;
+                this.@Rot.canceled += instance.OnRot;
+                this.@GrabRight.started += instance.OnGrabRight;
+                this.@GrabRight.performed += instance.OnGrabRight;
+                this.@GrabRight.canceled += instance.OnGrabRight;
+                this.@GrabLeft.started += instance.OnGrabLeft;
+                this.@GrabLeft.performed += instance.OnGrabLeft;
+                this.@GrabLeft.canceled += instance.OnGrabLeft;
             }
         }
     }

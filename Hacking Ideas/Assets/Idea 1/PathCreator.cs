@@ -8,9 +8,8 @@ namespace Idea_1
         public Path path;
         
         private void CreatePath() => 
-            this.path = new Path(transform.position);
+            this.path = new Path(this.transform.position);
 
-        private void Reset() => 
-            CreatePath();
+        private void Reset() => this.CreatePath();
     }
 }

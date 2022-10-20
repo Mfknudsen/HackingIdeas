@@ -122,7 +122,7 @@ namespace Idea_1
 
         private void Start()
         {
-            this.lineRenders = GetComponentsInChildren<LineRenderer>();
+            this.lineRenders = this.GetComponentsInChildren<LineRenderer>();
 
             foreach (LineRenderer lineRenderer in this.lineRenders)
             {
@@ -221,11 +221,11 @@ namespace Idea_1
             switch (this.setup.playerControls)
             {
                 case Controls.V1:
-                    V1Controls(key, dir);
+                    this.V1Controls(key, dir);
                     break;
 
                 case Controls.V2:
-                    V2Controls(key, dir);
+                    this.V2Controls(key, dir);
                     break;
             }
         }
@@ -259,7 +259,7 @@ namespace Idea_1
             this.totalPoints.Add(this.front + this.fNormal * distFromGate);
             this.totalPoints.Add(this.front);
 
-            this.bezierPath = GetComponentsInChildren<PathCreator>()[0].path;
+            this.bezierPath = this.GetComponentsInChildren<PathCreator>()[0].path;
 
             this.bezierPath.MovePoint(0, this.totalPoints[0]);
 
@@ -272,7 +272,7 @@ namespace Idea_1
 
             this.calculatedPath = this.bezierPath.CalculateEvenlySpacedPoints(dist);
 
-            this.lineRenders = GetComponentsInChildren<LineRenderer>();
+            this.lineRenders = this.GetComponentsInChildren<LineRenderer>();
 
             this.lineRenders[0].positionCount = this.calculatedPath.Length;
 
@@ -293,7 +293,7 @@ namespace Idea_1
             this.splitTotalPoints.Add(this.splitTotalPoints[1] +
                                       (this.middle + this.mNormal * distFromGate - this.splitTotalPoints[1]) / 2);
 
-            this.splitPath = GetComponentsInChildren<PathCreator>()[1].path;
+            this.splitPath = this.GetComponentsInChildren<PathCreator>()[1].path;
 
             this.splitPath.MovePoint(0, this.splitTotalPoints[0]);
             this.splitPath.MovePoint(3, this.splitTotalPoints[1]);

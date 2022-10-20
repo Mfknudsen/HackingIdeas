@@ -52,7 +52,7 @@ namespace Idea_4
             {
                 if (this.grabbedBy.position == this.prePosition) return;
 
-                Vector3 center = transform.position;
+                Vector3 center = this.transform.position;
                 Vector3 curPos = this.grabbedBy.position;
 
                 Vector2 camPos = this.cam.WorldToScreenPoint(curPos),
@@ -60,8 +60,8 @@ namespace Idea_4
 
                 Vector2 dir = camPos - preCamPos;
 
-                transform.RotateAround(center, this.cam.transform.up, -dir.x * .3f);
-                transform.RotateAround(center, this.cam.transform.right, dir.y * .3f);
+                this.transform.RotateAround(center, this.cam.transform.up, -dir.x * .3f);
+                this.transform.RotateAround(center, this.cam.transform.right, dir.y * .3f);
 
                 this.prePosition = curPos;
             }
@@ -69,7 +69,7 @@ namespace Idea_4
 
         protected override void OnGrab()
         {
-            Transform t = transform;
+            Transform t = this.transform;
             this.grabbedBy = t.parent;
             this.prePosition = this.grabbedBy.position;
             t.parent = this.setup.transform;
@@ -103,11 +103,11 @@ namespace Idea_4
 
         public void Setup(int lineCount)
         {
-            Transform t = transform;
+            Transform t = this.transform;
             Vector3 center = t.position;
             for (int i = 0; i < lineCount; i++)
             {
-                Vector3 startPoint = RandomPointOnBrain(center), endPoint = RandomPointOnBrain(center);
+                Vector3 startPoint = this.RandomPointOnBrain(center), endPoint = this.RandomPointOnBrain(center);
                 Vector3 startDir = startPoint - center, endDir = endPoint - center;
                 startDir *= 5;
                 endDir *= 5;
@@ -116,8 +116,7 @@ namespace Idea_4
                 int count = Mathf.FloorToInt(Vector3.Angle(startPoint - center, endPoint - center) / 5);
 
                 for (int j = 1; j < count; j++)
-                    between.Add(
-                        PointOnObject(Vector3.Lerp(
+                    between.Add(this.PointOnObject(Vector3.Lerp(
                                 startPoint + startDir,
                                 endPoint + endDir,
                                 1f / count * j),
@@ -189,7 +188,7 @@ namespace Idea_4
             RaycastHit[] hits = Physics.RaycastAll(checkPoint, dir, Mathf.Infinity);
             foreach (RaycastHit hit in hits)
             {
-                if (hit.collider.gameObject == gameObject)
+                if (hit.collider.gameObject == this.gameObject)
                     return hit.point;
             }
 
@@ -205,7 +204,7 @@ namespace Idea_4
 
             foreach (RaycastHit hit in hits)
             {
-                if (hit.collider.gameObject == gameObject)
+                if (hit.collider.gameObject == this.gameObject)
                     return hit.point;
             }
 

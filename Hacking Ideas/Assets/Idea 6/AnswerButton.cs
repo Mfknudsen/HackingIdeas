@@ -20,10 +20,10 @@ namespace Idea_6
 
         protected override void OnGrab()
         {
-            transform.parent = this.originParent;
+            this.transform.parent = this.originParent;
 
-            if (answer != null)
-                this.setup.AnswerQuestion(answer);
+            if (this.answer != null)
+                this.setup.AnswerQuestion(this.answer);
         }
 
         public void SetAnswer(Answer answer)

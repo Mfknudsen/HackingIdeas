@@ -35,7 +35,7 @@ namespace Idea_6
 
             yield return new WaitForSeconds(8);
 
-            this.currentCoroutine = StartCoroutine(ShowNewQuestion());
+            this.currentCoroutine = this.StartCoroutine(this.ShowNewQuestion());
         }
 
         private IEnumerator ShowNewQuestion()
@@ -68,7 +68,7 @@ namespace Idea_6
 
             yield return new WaitForSeconds(this.timeBetween);
 
-            AnswerQuestion(null);
+            this.AnswerQuestion(null);
         }
 
         public void AnswerQuestion(Answer answer)
@@ -87,11 +87,11 @@ namespace Idea_6
                 this.questionText.text = "Wrong: " + this.currentWrong;
             }
 
-            StopCoroutine(this.currentCoroutine);
+            this.StopCoroutine(this.currentCoroutine);
 
             if (this.currentCorrect < this.goal && this.currentWrong < this.maxMissed)
             {
-                this.currentCoroutine = StartCoroutine(ShowNewQuestion());
+                this.currentCoroutine = this.StartCoroutine(this.ShowNewQuestion());
                 return;
             }
 

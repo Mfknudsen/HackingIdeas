@@ -19,11 +19,11 @@ namespace Idea_1
         /// </summary>
         private void Update()
         {
-            Transform moveTransform = transform;
+            Transform moveTransform = this.transform;
             Vector3 handForward = this.rightHand.forward;
             moveTransform.position = this.rightHand.position + handForward * .25f;
 
-            transform.LookAt(moveTransform.position + handForward, this.rightHand.up);
+            this.transform.LookAt(moveTransform.position + handForward, this.rightHand.up);
         }
     }
 }

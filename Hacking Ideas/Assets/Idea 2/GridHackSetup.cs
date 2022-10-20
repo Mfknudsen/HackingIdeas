@@ -32,7 +32,7 @@ namespace Idea_2
         {
             foreach (Vector2Int index in this.keyStartPositions)
             {
-                GameObject obj = Instantiate(this.keyPrefab, transform);
+                GameObject obj = Instantiate(this.keyPrefab, this.transform);
                 obj.name = "Key";
 
                 GridKey key = obj.GetComponent<GridKey>();

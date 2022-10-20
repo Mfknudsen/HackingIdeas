@@ -130,7 +130,7 @@ namespace Idea_1
         /// </summary>
         private void OnValidate()
         {
-            foreach (LineRenderer r in GetComponentsInChildren<LineRenderer>())
+            foreach (LineRenderer r in this.GetComponentsInChildren<LineRenderer>())
             {
                 r.startWidth = this.lineSize;
                 r.endWidth = this.lineSize;
@@ -149,7 +149,7 @@ namespace Idea_1
             }
 
 #if UNITY_EDITOR
-            foreach (Line l in GetComponentsInChildren<Line>())
+            foreach (Line l in this.GetComponentsInChildren<Line>())
             {
                 l.displayGizmo = this.displayLineGizmos;
                 l.frontColor = this.frontColor;
@@ -183,7 +183,7 @@ namespace Idea_1
             }
 
             //Reset current sequence.
-            ResetCurrentSequence();
+            this.ResetCurrentSequence();
         }
 
         #endregion
@@ -213,7 +213,7 @@ namespace Idea_1
             if (this.goalSequence[this.currentSequence.Count] != toAdd)
             {
                 key.ResetStartPosition();
-                ResetCurrentSequence();
+                this.ResetCurrentSequence();
                 return;
             }
 
@@ -230,7 +230,7 @@ namespace Idea_1
 
             //Check if the player have won.
             if (this.currentSequence.Count == this.goalSequence.Count)
-                key.SetCurrentLine(GetComponentInChildren<EndLine>(), TransferTo.Front, 1);
+                key.SetCurrentLine(this.GetComponentInChildren<EndLine>(), TransferTo.Front, 1);
         }
 
         #endregion
@@ -245,7 +245,7 @@ namespace Idea_1
         private void CreateNewSetup()
         {
             //Delete previous lines
-            foreach (Line l in transform.GetComponentsInChildren<Line>())
+            foreach (Line l in this.transform.GetComponentsInChildren<Line>())
             {
                 if (l.GetType() != typeof(EndLine))
                     DestroyImmediate(l.gameObject);
@@ -261,7 +261,7 @@ namespace Idea_1
                 {
                     transform =
                     {
-                        parent = transform,
+                        parent = this.transform,
                         localPosition = Vector3.zero
                     }
                 };
@@ -320,7 +320,7 @@ namespace Idea_1
                         Random.Range(-this.maxAngle, this.maxAngle),
                         Random.Range(-this.maxAngle * 2, this.maxAngle * 2));
 
-                if (Physics.Raycast(transform.position, angle.normalized, out RaycastHit hit, 100))
+                if (Physics.Raycast(this.transform.position, angle.normalized, out RaycastHit hit, 100))
                 {
                     front = hit.point;
                     fNormal = hit.normal;
@@ -334,7 +334,7 @@ namespace Idea_1
                         Random.Range(-this.maxAngle, this.maxAngle),
                         Random.Range(-this.maxAngle * 2, this.maxAngle * 2));
 
-                if (Physics.Raycast(transform.position, angle.normalized, out hit, 100))
+                if (Physics.Raycast(this.transform.position, angle.normalized, out hit, 100))
                 {
                     back = hit.point;
                     bNormal = hit.normal;
@@ -348,7 +348,7 @@ namespace Idea_1
                         Random.Range(-this.maxAngle, this.maxAngle),
                         Random.Range(-this.maxAngle * 2, this.maxAngle * 2));
 
-                if (Physics.Raycast(transform.position, angle.normalized, out hit, 100))
+                if (Physics.Raycast(this.transform.position, angle.normalized, out hit, 100))
                 {
                     middle = hit.point;
                     mNormal = hit.normal;
@@ -391,9 +391,9 @@ namespace Idea_1
             }
 
             //Setup connections between points
-            EndLine end = transform.GetComponentInChildren<EndLine>();
+            EndLine end = this.transform.GetComponentInChildren<EndLine>();
             List<Line> lines = new List<Line>();
-            lines.AddRange(transform.GetComponentsInChildren<Line>());
+            lines.AddRange(this.transform.GetComponentsInChildren<Line>());
             //- Dont want to connect the end
             lines.Remove(end);
 
@@ -430,14 +430,14 @@ namespace Idea_1
             }
 
             //Create a goal sequence
-            ShuffleGoalSequence();
+            this.ShuffleGoalSequence();
         }
 
         [Button]
         private void ShuffleGoalSequence()
         {
             //Set the first line to the ball.
-            GetComponentInChildren<Key>().currentLine = this.allLines[0];
+            this.GetComponentInChildren<Key>().currentLine = this.allLines[0];
 
             //Clearing sequences.      
             this.goalSequence.Clear();

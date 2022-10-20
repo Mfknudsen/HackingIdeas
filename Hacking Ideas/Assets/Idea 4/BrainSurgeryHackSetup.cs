@@ -11,8 +11,8 @@ namespace Idea_4
 
         private void Start()
         {
-            this.knife ??= GetComponentInChildren<Knife>();
-            this.brain ??= GetComponentInChildren<Brain>();
+            this.knife ??= this.GetComponentInChildren<Knife>();
+            this.brain ??= this.GetComponentInChildren<Brain>();
             this.brain.Setup(this.lineCount);
         }
     }

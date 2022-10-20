@@ -38,10 +38,10 @@ public class VRMove : MonoBehaviour
         Vector3 forward = new Vector3(f.x, 0, f.z);
         this.dirTransform.LookAt(camPos + forward, Vector3.up);
 
-        transform.RotateAround(camPos, Vector3.up, this.rotDir.x * this.rotSpeed * Time.deltaTime);
+        this.transform.RotateAround(camPos, Vector3.up, this.rotDir.x * this.rotSpeed * Time.deltaTime);
 
         Vector3 move = this.dirTransform.forward * this.moveDir.y + this.dirTransform.right * this.moveDir.x;
         move.Normalize();
-        transform.position += move * (this.moveSpeed * Time.deltaTime);
+        this.transform.position += move * (this.moveSpeed * Time.deltaTime);
     }
 }

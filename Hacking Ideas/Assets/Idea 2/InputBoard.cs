@@ -50,7 +50,7 @@ namespace Idea_2
         {
             this.gridSize = size;
             List<GameObject> toDelete =
-                (from Transform d in transform select d.gameObject)
+                (from Transform d in this.transform select d.gameObject)
                 .ToList();
             foreach (GameObject o in toDelete)
                 DestroyImmediate(o);
@@ -65,14 +65,14 @@ namespace Idea_2
                 this.gridTransforms.Add(new Storage<Transform>(size.y));
             }
 
-            Transform t = transform;
+            Transform t = this.transform;
             Vector3 startPos = t.position + t.up * .55f;
 
             for (int x = 0; x < size.x; x++)
             {
                 for (int y = 0; y < size.y; y++)
                 {
-                    GameObject obj = Instantiate(tilePrefab, transform);
+                    GameObject obj = Instantiate(tilePrefab, this.transform);
                     obj.name = "Square + " + x + "-" + y;
 
                     Transform oTransform = obj.transform;
@@ -120,7 +120,7 @@ namespace Idea_2
 
                 key.gameObject.SetActive(true);
                 Transform keyT;
-                (keyT = key.transform).position = transform.parent.GetComponentInChildren<Button>().transform.position;
+                (keyT = key.transform).position = this.transform.parent.GetComponentInChildren<Button>().transform.position;
                 keyT.localScale = Vector3.one * .25f;
 
                 return;
@@ -130,14 +130,14 @@ namespace Idea_2
                 id.x >= this.gridSize.x || id.y >= this.gridSize.y ||
                 (this.gridBlocks[id.x][id.y] == null && this.blockerTypes[id.x][id.y] == BlockerType.None))
             {
-                Reset(key);
+                this.Reset(key);
 
                 return;
             }
 
             if (this.blockerTypes[id.x][id.y] != BlockerType.None)
             {
-                key.currentCoroutine = StartCoroutine(this.gridTransforms[id.x][id.y].GetComponentInChildren<Blocker>()
+                key.currentCoroutine = this.StartCoroutine(this.gridTransforms[id.x][id.y].GetComponentInChildren<Blocker>()
                     .Trigger(
                         key,
                         this.setup.timePerBlock,
@@ -146,7 +146,7 @@ namespace Idea_2
                 return;
             }
 
-            key.currentCoroutine = StartCoroutine(
+            key.currentCoroutine = this.StartCoroutine(
                 this.gridBlocks[id.x][id.y].TriggerInput(
                     key,
                     this.setup.timePerBlock));
@@ -241,15 +241,14 @@ namespace Idea_2
         // ReSharper disable once SuggestBaseTypeForParameter
         public void Reset(GridKey key)
         {
-            foreach (GridKey g in transform.parent.GetComponentsInChildren<GridKey>())
+            foreach (GridKey g in this.transform.parent.GetComponentsInChildren<GridKey>())
             {
                 if (g is EndGoal)
                     continue;
 
                 try
                 {
-                    if (g.currentCoroutine != null)
-                        StopCoroutine(g.currentCoroutine);
+                    if (g.currentCoroutine != null) this.StopCoroutine(g.currentCoroutine);
                 }
                 catch
                 {
@@ -265,7 +264,7 @@ namespace Idea_2
                 g.Reset();
             }
 
-            foreach (Blocker b in transform.parent.GetComponentsInChildren<Blocker>())
+            foreach (Blocker b in this.transform.parent.GetComponentsInChildren<Blocker>())
                 b.Reset();
 
             foreach (InputBlock inputBlock in this.gridBlocks.SelectMany(b => b.list).Where(b => b != null))

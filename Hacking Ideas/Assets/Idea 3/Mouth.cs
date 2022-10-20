@@ -19,8 +19,7 @@ namespace Idea_3
 
         private void Start()
         {
-            if (Camera.main != null)
-                transform.LookAt(Camera.main.transform.position);
+            if (Camera.main != null) this.transform.LookAt(Camera.main.transform.position);
         }
 
         public void Eat(Food food)
@@ -35,7 +34,7 @@ namespace Idea_3
 
                 l.Remove(this.color);
 
-                SetColor(l[Random.Range(0, this.setup.colors.Count - 1)]);
+                this.SetColor(l[Random.Range(0, this.setup.colors.Count - 1)]);
             }
             else
                 this.current--;
@@ -62,7 +61,7 @@ namespace Idea_3
         public void SetColor(Color c)
         {
             this.color = c;
-            foreach (Renderer r in GetComponentsInChildren<Renderer>())
+            foreach (Renderer r in this.GetComponentsInChildren<Renderer>())
             {
                 Material mat = r.material;
                 mat.EnableKeyword("_Color");

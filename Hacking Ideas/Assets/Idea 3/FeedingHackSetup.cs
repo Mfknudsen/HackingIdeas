@@ -52,7 +52,7 @@ namespace Idea_3
 
             for (int i = 0; i < this.mouthCount; i++)
             {
-                GameObject obj = Instantiate(this.mouthPrefab, transform);
+                GameObject obj = Instantiate(this.mouthPrefab, this.transform);
 
                 Vector3 pos = originPos + right * (this.distanceBetween * this.mouthCount) / 2;
                 pos += -right * this.distanceBetween * i + Vector3.up * Random.Range(.2f, .7f);
@@ -68,14 +68,14 @@ namespace Idea_3
         {
             if (this.state != State.Running) return;
 
-            CheckState();
-            SpawnFood();
+            this.CheckState();
+            this.SpawnFood();
         }
 
         private void CheckState()
         {
             int done = 0, dead = 0;
-            foreach (Mouth m in GetComponentsInChildren<Mouth>())
+            foreach (Mouth m in this.GetComponentsInChildren<Mouth>())
             {
                 if (m.current == m.max)
                     done++;
@@ -93,7 +93,7 @@ namespace Idea_3
 
             if (this.state == State.Running) return;
 
-            foreach (Transform t in transform)
+            foreach (Transform t in this.transform)
             {
                 if (t.GetComponent<Mouth>() is { } mouth)
                     mouth.done = true;
@@ -102,7 +102,7 @@ namespace Idea_3
                     text.text = this.state.ToString();
             }
 
-            Food[] foods = GetComponentsInChildren<Food>();
+            Food[] foods = this.GetComponentsInChildren<Food>();
 
             for (int i = foods.Length - 1; i >= 0; i--)
             {
@@ -113,8 +113,7 @@ namespace Idea_3
                 Destroy(f.gameObject);
             }
 
-            if (this.spawnCoroutine != null)
-                StopCoroutine(this.spawnCoroutine);
+            if (this.spawnCoroutine != null) this.StopCoroutine(this.spawnCoroutine);
         }
 
         private void SpawnFood()
@@ -126,14 +125,14 @@ namespace Idea_3
 
             float timeBetween = this.spawnCurve.Evaluate(this.currentTime / (60 * this.timeToMax));
 
-            this.spawnCoroutine = StartCoroutine(SpawnFoodTimer(timeBetween));
+            this.spawnCoroutine = this.StartCoroutine(this.SpawnFoodTimer(timeBetween));
         }
 
         private IEnumerator SpawnFoodTimer(float time)
         {
             yield return new WaitForSeconds(time);
 
-            GameObject obj = Instantiate(this.foodPrefab, transform);
+            GameObject obj = Instantiate(this.foodPrefab, this.transform);
             Vector3 oppositeSpawn = new Vector3(-this.spawnPos.x - this.spawnSize.x, this.spawnPos.y, this.spawnPos.z);
 
             obj.transform.position = (Random.Range(1, 11) <= 5 ? this.spawnPos : oppositeSpawn) +

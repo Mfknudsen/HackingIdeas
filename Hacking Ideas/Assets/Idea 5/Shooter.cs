@@ -33,7 +33,7 @@ namespace Idea_5
                 {
                     this.shot = true;
                     this.wait = true;
-                    Shoot();
+                    this.Shoot();
                 }
             };
         }
@@ -43,7 +43,7 @@ namespace Idea_5
             GameObject obj = Instantiate(this.bulletPrefab);
             Vector3 spawnPos = this.spawnPoint.position;
             obj.transform.position = spawnPos;
-            obj.transform.LookAt(spawnPos + transform.forward, Vector3.up);
+            obj.transform.LookAt(spawnPos + this.transform.forward, Vector3.up);
 
             obj.GetComponent<Bullet>().color = this.color;
 
@@ -51,7 +51,7 @@ namespace Idea_5
             r.material.EnableKeyword("_Color");
             r.material.SetColor(ColorID, this.color);
 
-            StartCoroutine(Cooldown());
+            this.StartCoroutine(this.Cooldown());
         }
 
         private IEnumerator Cooldown()

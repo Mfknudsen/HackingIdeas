@@ -20,7 +20,7 @@ namespace Idea_5
                 yield return null;
             }
 
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
     }
 }

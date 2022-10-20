@@ -30,8 +30,8 @@ namespace Idea_4
             int diffIndex = this.pointTransforms.Count - this.points.Count;
             for (int i = 0; i < this.points.Count; i++) this.points[i] = this.pointTransforms[i + diffIndex].position;
 
-            for (int i = 0; i < this.points.Count; i++) this.lineRenderer.SetPosition(i, this.points[i] + (this.points[i] - transform.position).normalized * .002f);
-            this.indicator.transform.LookAt(this.startPoint + (transform.position - this.startPoint));
+            for (int i = 0; i < this.points.Count; i++) this.lineRenderer.SetPosition(i, this.points[i] + (this.points[i] - this.transform.position).normalized * .002f);
+            this.indicator.transform.LookAt(this.startPoint + (this.transform.position - this.startPoint));
 
             this.indicator.transform.position = this.points[this.currentIndex];
             this.indicator.transform.LookAt(this.points[this.currentIndex] +
@@ -48,7 +48,7 @@ namespace Idea_4
             this.indicator = indicator;
             this.brain = brain;
 
-            this.indicator.transform.parent = transform;
+            this.indicator.transform.parent = this.transform;
             this.indicator.transform.position = this.startPoint;
 
             return this;

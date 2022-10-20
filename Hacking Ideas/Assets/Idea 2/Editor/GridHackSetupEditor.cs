@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Idea_2.Editor
 {
+    /// <summary>
+    /// Editor script for adding inspector functionality. 
+    /// </summary>
     [CustomEditor(typeof(GridHackSetup))]
     public class GridHackSetupEditor : UnityEditor.Editor
     {
@@ -13,9 +16,12 @@ namespace Idea_2.Editor
 
         private GameObject dirBlocker, deniedBlocker, switchBlocker;
 
+        /// <summary>
+        /// Set target and load the prefabs for the different types of blockers.
+        /// </summary>
         private void OnEnable()
         {
-            this.setup = target as GridHackSetup;
+            this.setup = this.target as GridHackSetup;
 
             this.dirBlocker ??=
                 AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Idea 2/Blockers/DirectionalBlocker.prefab");
@@ -25,6 +31,10 @@ namespace Idea_2.Editor
                 AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Idea 2/Blockers/SwitchBlocker.prefab");
         }
 
+        /// <summary>
+        /// Add the different buttons and setup features.
+        /// Also show the default inspector.
+        /// </summary>
         public override void OnInspectorGUI()
         {
             if (GUILayout.Button("Setup new grid"))
@@ -34,17 +44,22 @@ namespace Idea_2.Editor
 
             EditorGUILayout.Separator();
 
-            BlockerPositionAndTypes(size);
+            this.BlockerPositionAndTypes(size);
 
             EditorGUILayout.Separator();
 
-            KeyStartPositions(size);
+            this.KeyStartPositions(size);
 
             EditorGUILayout.Separator();
 
             base.OnInspectorGUI();
         }
 
+        /// <summary>
+        /// With a grid setup show the different positions and what type of static blocker.
+        /// Allows to place new blockers in the grid and change the current to a different type or remove it.
+        /// </summary>
+        /// <param name="size">The size of the current grid board</param>
         private void BlockerPositionAndTypes(Vector2Int size)
         {
             EditorGUILayout.LabelField("Blockers:");
@@ -57,11 +72,9 @@ namespace Idea_2.Editor
             const float ySize = 20;
 
             if (board.blockerTypes.Count == 0 || board.blockerTypes[0].Count == 0)
-            {
-                base.OnInspectorGUI();
                 return;
-            }
 
+            //For each position show an enum dropdown menu.
             for (int y = 0; y < size.y; y++)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -78,8 +91,9 @@ namespace Idea_2.Editor
                         "",
                         preType));
 
+                    //If a new type was selected then set it up.
                     if (board.blockerTypes[x][y] != preType)
-                        SetupBlocker(new Vector2Int(x, y), board.gridTransforms[x][y], board.blockerTypes[x][y]);
+                        this.SetupBlocker(new Vector2Int(x, y), board.gridTransforms[x][y], board.blockerTypes[x][y]);
                 }
 
                 EditorGUILayout.EndHorizontal();
@@ -88,15 +102,21 @@ namespace Idea_2.Editor
             EditorGUILayout.Space(ySize * size.y);
         }
 
+        /// <summary>
+        /// Show the possible start positions of the keys and allows the set a true/false if a key should spawn there.
+        /// The possible start positions are outside of the input board.
+        /// </summary>
+        /// <param name="size">The size of the current grid board</param>
         private void KeyStartPositions(Vector2Int size)
         {
             EditorGUILayout.LabelField("Key Start Positions:");
 
+            //Positions +1 on the y axis.
             EditorGUILayout.BeginHorizontal();
             GUILayout.Space(20);
             for (int x = 0; x < size.x; x++)
             {
-                bool value = KeyStartsAtIndex(new Vector2Int(x, size.y));
+                bool value = this.KeyStartsAtIndex(new Vector2Int(x, size.y));
 
                 GUILayout.FlexibleSpace();
                 bool result = GUILayout.Toggle(value, "");
@@ -122,12 +142,12 @@ namespace Idea_2.Editor
             GUILayout.Space(20);
             EditorGUILayout.EndHorizontal();
 
-            EditorGUILayout.BeginHorizontal();
-
+            EditorGUILayout.BeginHorizontal(); 
+            //Positions -1 on the x axis.
             EditorGUILayout.BeginVertical();
             for (int y = size.y - 1; y >= 0; y--)
             {
-                bool value = KeyStartsAtIndex(new Vector2Int(-1, y));
+                bool value = this.KeyStartsAtIndex(new Vector2Int(-1, y));
 
                 bool result = GUILayout.Toggle(value, "");
 
@@ -152,10 +172,11 @@ namespace Idea_2.Editor
 
             GUILayout.FlexibleSpace();
 
+            //Positions +1 on the x axis.
             EditorGUILayout.BeginVertical();
             for (int y = size.y - 1; y >= 0; y--)
             {
-                bool value = KeyStartsAtIndex(new Vector2Int(size.x, y));
+                bool value = this.KeyStartsAtIndex(new Vector2Int(size.x, y));
 
                 bool result = GUILayout.Toggle(value, "");
 
@@ -180,12 +201,13 @@ namespace Idea_2.Editor
 
             EditorGUILayout.EndHorizontal();
 
+            //Positions -1 on the y axis.
             EditorGUILayout.BeginHorizontal();
             GUILayout.Space(20);
 
             for (int x = 0; x < size.x; x++)
             {
-                bool value = KeyStartsAtIndex(new Vector2Int(x, -1));
+                bool value = this.KeyStartsAtIndex(new Vector2Int(x, -1));
 
                 GUILayout.FlexibleSpace();
                 bool result = GUILayout.Toggle(value, "");
@@ -212,6 +234,12 @@ namespace Idea_2.Editor
             EditorGUILayout.EndHorizontal();
         }
 
+        /// <summary>
+        /// Spawn or remove a blocker on the grid board.
+        /// </summary>
+        /// <param name="id">ID position on the grid board</param>
+        /// <param name="t">The transform to parent to</param>
+        /// <param name="type">Type of the blocker</param>
         private void SetupBlocker(Vector2Int id, Transform t, BlockerType type)
         {
             List<GameObject> toDestroy = (from Transform child in t
@@ -222,9 +250,8 @@ namespace Idea_2.Editor
             foreach (GameObject g in toDestroy)
                 DestroyImmediate(g);
 
-            GameObject instants = null;
-            PlaceDirection direction = PlaceDirection.MinusX;
-            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+            GameObject instants;
+            PlaceDirection direction;
             switch (type)
             {
                 case BlockerType.Down:
@@ -310,6 +337,9 @@ namespace Idea_2.Editor
                     instants.transform.LookAt(instants.transform.position - t.right);
                     direction = PlaceDirection.PlusX;
                     break;
+                case BlockerType.None:
+                default:
+                    return;
             }
 
             if (instants == null)
@@ -326,9 +356,12 @@ namespace Idea_2.Editor
             b.placeDirection = direction;
         }
 
-        private bool KeyStartsAtIndex(Vector2Int index)
-        {
-            return setup.keyStartPositions.Any(pos => pos == index);
-        }
+        /// <summary>
+        /// If there is any key at the index.
+        /// </summary>
+        /// <param name="index">Input board position id</param>
+        /// <returns>True if any key has the id</returns>
+        private bool KeyStartsAtIndex(Vector2Int index) => 
+            this.setup.keyStartPositions.Any(pos => pos == index);
     }
 }

@@ -3,21 +3,25 @@ using System.Linq;
 
 namespace Idea_2
 {
+    /// <summary>
+    /// A "hack" for creating a quick working button.
+    /// The button is a grabbable item that upon being grabbed will instantly release itself by un-parenting.
+    /// </summary>
     public class Button : VrGrabObject
     {
+        /// <summary>
+        /// When grabbed, release by un-parenting and trigger the keys or reset them.
+        /// </summary>
         protected override void OnGrab()
         {
-            transform.parent = this.originParent;
+            this.transform.parent = this.originParent;
 
             List<GridKey> keys = this.originParent.GetComponentsInChildren<GridKey>().ToList();
 
             bool ready = keys.Any(k => !k.ready);
 
-            foreach (GridKey gridKey in keys)
+            foreach (GridKey gridKey in keys.Where(gridKey => !(gridKey is EndGoal)))
             {
-                if (gridKey is EndGoal)
-                    continue;
-
                 if (ready)
                     gridKey.TriggerFirst();
                 else
@@ -25,9 +29,7 @@ namespace Idea_2
             }
         }
 
-        protected override void OnRelease()
-        {
-            transform.parent = this.originParent;
-        }
+        protected override void OnRelease() => 
+            this.transform.parent = this.originParent;
     }
 }

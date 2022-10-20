@@ -10,7 +10,7 @@ namespace Idea_1
 
         private void Start()
         {
-            this.front = transform.position;
+            this.front = this.transform.position;
             this.back = this.front;
         }
 

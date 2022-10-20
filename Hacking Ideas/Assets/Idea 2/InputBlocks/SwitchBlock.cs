@@ -3,6 +3,11 @@ using UnityEngine;
 
 namespace Idea_2.InputBlocks
 {
+    /// <summary>
+    /// Moves the key in the place direction a distance of one.
+    /// After starting thew move of one key it will switch direction to that opposite of it's current.
+    /// This will happen every time the block moves one key.
+    /// </summary>
     public class SwitchBlock : InputBlock
     {
         private bool switched;
@@ -31,7 +36,7 @@ namespace Idea_2.InputBlocks
 
             float t = 0;
             Vector2Int idToMoveTo = new Vector2Int(this.id.x + keyDir.x, this.id.y + keyDir.y);
-            Vector3 dir = UpDir() * keyDir.y + RightDir() * keyDir.x;
+            Vector3 dir = this.UpDir() * keyDir.y + this.RightDir() * keyDir.x;
 
             while (t < timePerBlock)
             {
@@ -43,8 +48,8 @@ namespace Idea_2.InputBlocks
             }
 
             key.previousDirection = this.placeDirection;
-            Transform trans = transform;
-            transform.LookAt(trans.position - trans.forward, trans.up);
+            Transform trans = this.transform;
+            this.transform.LookAt(trans.position - trans.forward, trans.up);
 
             this.inputBoard.Trigger(key, idToMoveTo);
         }
@@ -56,8 +61,8 @@ namespace Idea_2.InputBlocks
 
             this.switched = false;
 
-            Transform trans = transform;
-            transform.LookAt(trans.position - trans.forward, trans.up);
+            Transform trans = this.transform;
+            this.transform.LookAt(trans.position - trans.forward, trans.up);
         }
     }
 }
